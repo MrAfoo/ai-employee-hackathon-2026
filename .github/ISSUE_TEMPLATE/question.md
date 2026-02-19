@@ -27,5 +27,4 @@ Which part of the project is your question about?
 - [ ] Helm Charts
 - [ ] General Architecture
 
-## 📋 Additional Details
-Any extra information that might help answer your question.
+

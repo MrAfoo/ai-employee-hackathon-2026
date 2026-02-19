@@ -29,8 +29,3 @@ Have you considered any alternative solutions or workarounds?
 - [ ] Documentation
 - [ ] Other
 
-## 📸 Mockups / Examples
-If applicable, add mockups, diagrams, or example code.
-
-## 🔍 Additional Context
-Any other context or screenshots about the feature request.

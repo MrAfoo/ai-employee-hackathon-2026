@@ -29,10 +29,4 @@ What actually happened.
 | kubectl version | e.g. 1.28.0 |
 | Helm version | e.g. 3.12.0 |
 
-## 📸 Screenshots / Logs
-```
-Paste any error logs here
-```
 
-## 🔍 Additional Context
-Any other context about the problem here.

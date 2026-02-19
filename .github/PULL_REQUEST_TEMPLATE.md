@@ -34,12 +34,4 @@ curl http://localhost:8083/demo/daily
 - [ ] Documentation updated (if needed)
 - [ ] PR title follows format: `type(scope): description`
 
----
 
-## 📸 Screenshots (if applicable)
-Add screenshots of the changes if relevant (e.g. landing page UI changes).
-
----
-
-## 🔍 Additional Notes
-Any extra information for the reviewer.
