@@ -1,0 +1,15 @@
+apiVersion: v2
+name: workflow-automation
+description: A Helm chart for Workflow Automation AI Employee
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+keywords:
+  - ai
+  - workflow
+  - automation
+  - orchestration
+maintainers:
+  - name: Workflow Automation Team
+    email: team@example.com
+dependencies: []

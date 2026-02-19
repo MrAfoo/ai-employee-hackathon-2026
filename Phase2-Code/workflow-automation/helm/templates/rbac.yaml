@@ -1,0 +1,37 @@
+{{- if .Values.rbac.create -}}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "workflow-automation.fullname" . }}
+  labels:
+    {{- include "workflow-automation.labels" . | nindent 4 }}
+rules:
+  # Allow workflow engine to manage pods for workflow execution
+  - apiGroups: [""]
+    resources: ["pods", "pods/log"]
+    verbs: ["get", "list", "watch", "create", "delete"]
+  # Allow access to configmaps for workflow definitions
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get", "list", "watch"]
+  # Allow access to events for workflow tracking
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["create", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "workflow-automation.fullname" . }}
+  labels:
+    {{- include "workflow-automation.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ include "workflow-automation.fullname" . }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "workflow-automation.serviceAccountName" . }}
+    namespace: {{ .Release.Namespace }}
+{{- end }}

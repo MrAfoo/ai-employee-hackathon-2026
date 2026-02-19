@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: workflow-automation-config
+  labels:
+    app: workflow-automation
+data:
+  app-config.yaml: |
+    workflow:
+      max_concurrent: 5
+      timeout: 3600
+      retry_attempts: 3
+      enable_notifications: true
+    
+    logging:
+      level: INFO
+      format: json
+      retention_days: 30
+    
+    monitoring:
+      enabled: true
+      port: 9090

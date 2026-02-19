@@ -1,0 +1,59 @@
+# Reporting Agent AI Employee Dependencies
+
+# Web framework
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+
+# Data handling
+pydantic==2.5.3
+pydantic-settings==2.1.0
+pandas==2.1.4
+numpy==1.26.3
+
+# Task scheduling
+apscheduler==3.10.4
+croniter==2.0.1
+
+# Report generation
+jinja2==3.1.3
+markdown==3.5.2
+markdown-it-py==3.0.0
+pypandoc==1.12
+
+# Data visualization
+plotly==5.18.0
+matplotlib==3.8.2
+seaborn==0.13.1
+
+# AI/LLM capabilities (open-source)
+openai==1.10.0  # Compatible with Ollama
+langchain==0.1.4
+langchain-community==0.0.16
+
+# HTTP client for API calls
+httpx==0.26.0
+aiohttp==3.9.1
+
+# Database
+sqlalchemy==2.0.25
+alembic==1.13.1
+
+# Date/time handling
+python-dateutil==2.8.2
+pytz==2024.1
+
+# Utilities
+python-dotenv==1.0.0
+click==8.1.7
+pyyaml==6.0.1
+
+# Logging and monitoring
+structlog==24.1.0
+prometheus-client==0.19.0
+
+# Notifications
+apprise==1.7.1
+
+# Testing
+pytest==7.4.4
+pytest-asyncio==0.23.3

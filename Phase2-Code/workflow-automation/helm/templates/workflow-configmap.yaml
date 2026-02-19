@@ -1,0 +1,65 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "workflow-automation.fullname" . }}-workflows
+  labels:
+    {{- include "workflow-automation.labels" . | nindent 4 }}
+data:
+  example-workflow.yaml: |
+    name: example-workflow
+    description: Example workflow demonstrating capabilities
+    triggers:
+      - type: schedule
+        cron: "0 9 * * *"  # Daily at 9 AM
+      - type: event
+        event_type: task_created
+    
+    steps:
+      - name: validate-input
+        type: script
+        script: |
+          echo "Validating input..."
+          exit 0
+      
+      - name: process-data
+        type: script
+        script: |
+          echo "Processing data..."
+          sleep 2
+          echo "Data processed successfully"
+      
+      - name: send-notification
+        type: notification
+        message: "Workflow completed successfully"
+    
+    on_failure:
+      - type: notification
+        message: "Workflow failed:  error"
+      - type: log
+        level: error
+  
+  data-backup-workflow.yaml: |
+    name: data-backup
+    description: Automated data backup workflow
+    triggers:
+      - type: schedule
+        cron: "0 0 * * *"  # Daily at midnight
+    
+    steps:
+      - name: create-backup
+        type: script
+        script: |
+          echo "Creating backup..."
+          tar -czf /app/data/backup-$(date +%Y%m%d).tar.gz /app/data
+      
+      - name: verify-backup
+        type: script
+        script: |
+          echo "Verifying backup..."
+          tar -tzf /app/data/backup-$(date +%Y%m%d).tar.gz > /dev/null
+      
+      - name: cleanup-old-backups
+        type: script
+        script: |
+          echo "Cleaning up old backups..."
+          find /app/data -name "backup-*.tar.gz" -mtime +7 -delete

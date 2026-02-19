@@ -1,0 +1,60 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: default
+  labels:
+    phase: phase5
+data:
+  ENV: production
+  LOG_LEVEL: INFO
+  ENABLE_METRICS: "true"
+  METRICS_PORT: "9090"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: task-manager-config
+  namespace: task-manager
+  labels:
+    app: task-manager
+    phase: phase5
+data:
+  ENV: production
+  LOG_LEVEL: INFO
+  TASK_MANAGER_PORT: "8080"
+  ENABLE_METRICS: "true"
+  DAILY_REPORT_TIME: "09:00"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: workflow-automation-config
+  namespace: workflow
+  labels:
+    app: workflow-automation
+    phase: phase5
+data:
+  ENV: production
+  LOG_LEVEL: INFO
+  WORKFLOW_PORT: "8080"
+  ENABLE_METRICS: "true"
+  MAX_CONCURRENT_WORKFLOWS: "5"
+  WORKFLOW_TIMEOUT: "3600"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: reporting-agent-config
+  namespace: reporting
+  labels:
+    app: reporting-agent
+    phase: phase5
+data:
+  ENV: production
+  LOG_LEVEL: INFO
+  REPORTING_PORT: "8080"
+  ENABLE_METRICS: "true"
+  DAILY_REPORT_TIME: "09:00"
+  WEEKLY_REPORT_DAY: "monday"

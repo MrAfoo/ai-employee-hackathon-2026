@@ -1,0 +1,32 @@
+{{- if .Values.persistence.enabled -}}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "workflow-automation.fullname" . }}-data-pvc
+  labels:
+    {{- include "workflow-automation.labels" . | nindent 4 }}
+    component: data
+spec:
+  accessModes:
+    - {{ .Values.persistence.data.accessMode }}
+  storageClassName: {{ .Values.persistence.data.storageClass }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.data.size }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "workflow-automation.fullname" . }}-logs-pvc
+  labels:
+    {{- include "workflow-automation.labels" . | nindent 4 }}
+    component: logs
+spec:
+  accessModes:
+    - {{ .Values.persistence.logs.accessMode }}
+  storageClassName: {{ .Values.persistence.logs.storageClass }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.logs.size }}
+{{- end }}

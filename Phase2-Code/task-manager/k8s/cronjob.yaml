@@ -1,0 +1,44 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: task-manager-daily-report
+  labels:
+    app: task-manager
+    component: daily-report
+spec:
+  # Run daily at 9 AM
+  schedule: "0 9 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: task-manager
+            job-type: daily-report
+        spec:
+          restartPolicy: OnFailure
+          serviceAccountName: task-manager
+          containers:
+          - name: daily-report
+            image: task-manager:latest
+            imagePullPolicy: IfNotPresent
+            command: ["python", "-m", "src.cli", "generate-daily-report"]
+            env:
+            - name: LLM_BASE_URL
+              value: "http://ollama:11434"
+            - name: LLM_MODEL
+              value: "llama2"
+            - name: TASK_MANAGER_DATA_DIR
+              value: "/app/data"
+            - name: LOG_LEVEL
+              value: "INFO"
+            volumeMounts:
+            - name: data
+              mountPath: /app/data
+          volumes:
+          - name: data
+            persistentVolumeClaim:
+              claimName: task-manager-pvc

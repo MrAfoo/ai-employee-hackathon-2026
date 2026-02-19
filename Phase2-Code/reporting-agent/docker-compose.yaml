@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  reporting-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: reporting-agent:latest
+    container_name: reporting-agent
+    ports:
+      - "8080:8080"
+      - "9090:9090"
+    environment:
+      - LLM_BASE_URL=http://ollama:11434
+      - LLM_MODEL=llama2
+      - REPORTING_PORT=8080
+      - REPORTS_DIR=/app/reports
+      - DATA_DIR=/app/data
+      - TEMPLATES_DIR=/app/templates
+      - TASK_MANAGER_URL=http://task-manager:8080
+      - WORKFLOW_AUTOMATION_URL=http://workflow-automation:8080
+      - DAILY_REPORT_TIME=09:00
+      - WEEKLY_REPORT_DAY=monday
+      - WEEKLY_REPORT_TIME=09:00
+      - LOG_LEVEL=INFO
+      - ENABLE_METRICS=true
+      - METRICS_PORT=9090
+      - ENABLE_ANOMALY_DETECTION=true
+    volumes:
+      - reports:/app/reports
+      - data:/app/data
+      - ./templates:/app/templates:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    depends_on:
+      - ollama
+    restart: unless-stopped
+    networks:
+      - ai-employee-network
+
+  # Optional: Include other services for full integration
+  # task-manager:
+  #   image: task-manager:latest
+  #   ports:
+  #     - "8081:8080"
+  #   networks:
+  #     - ai-employee-network
+
+  # workflow-automation:
+  #   image: workflow-automation:latest
+  #   ports:
+  #     - "8082:8080"
+  #   networks:
+  #     - ai-employee-network
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    restart: unless-stopped
+    networks:
+      - ai-employee-network
+
+volumes:
+  reports:
+  data:
+  ollama-data:
+
+networks:
+  ai-employee-network:
+    driver: bridge

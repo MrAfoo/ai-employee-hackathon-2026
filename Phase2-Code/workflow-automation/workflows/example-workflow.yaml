@@ -1,0 +1,118 @@
+name: example-workflow
+description: Example workflow demonstrating capabilities
+version: "1.0"
+
+triggers:
+  - type: schedule
+    cron: "0 9 * * *"  # Daily at 9 AM
+    enabled: true
+  
+  - type: event
+    event_type: task_created
+    enabled: true
+  
+  - type: webhook
+    path: /trigger/example
+    enabled: true
+
+parameters:
+  - name: input_data
+    type: string
+    required: false
+    default: "test data"
+  
+  - name: notification_enabled
+    type: boolean
+    required: false
+    default: true
+
+steps:
+  - name: validate-input
+    type: script
+    description: Validate workflow input parameters
+    script: |
+      #!/bin/bash
+      echo "Validating input: {{ params.input_data }}"
+      if [ -z "{{ params.input_data }}" ]; then
+        echo "Error: input_data is empty"
+        exit 1
+      fi
+      echo "Validation successful"
+    timeout: 30s
+  
+  - name: process-data
+    type: script
+    description: Process the input data
+    script: |
+      #!/bin/bash
+      echo "Processing data: {{ params.input_data }}"
+      sleep 2
+      echo "Data processed successfully"
+      echo "result=success" >> $WORKFLOW_OUTPUT
+    timeout: 60s
+    retry:
+      max_attempts: 3
+      backoff: exponential
+  
+  - name: ai-analysis
+    type: llm
+    description: Use AI to analyze the processed data
+    prompt: |
+      Analyze the following workflow execution data and provide insights:
+      Input: {{ params.input_data }}
+      Result: {{ steps.process-data.output.result }}
+      
+      Provide a brief summary and any recommendations.
+    model: llama2
+    temperature: 0.7
+  
+  - name: send-notification
+    type: notification
+    description: Send completion notification
+    condition: "{{ params.notification_enabled }}"
+    message: |
+      Workflow '{{ workflow.name }}' completed successfully!
+      
+      Summary: {{ steps.ai-analysis.output }}
+      Duration: {{ workflow.duration }}
+    channels:
+      - console
+      - log
+
+on_success:
+  - type: log
+    level: info
+    message: "Workflow {{ workflow.name }} completed successfully in {{ workflow.duration }}"
+  
+  - type: metric
+    name: workflow_success_total
+    labels:
+      workflow: "{{ workflow.name }}"
+
+on_failure:
+  - type: notification
+    message: |
+      Workflow '{{ workflow.name }}' failed!
+      Error: {{ error.message }}
+      Step: {{ error.step }}
+    channels:
+      - console
+      - log
+  
+  - type: log
+    level: error
+    message: "Workflow {{ workflow.name }} failed: {{ error.message }}"
+  
+  - type: metric
+    name: workflow_failure_total
+    labels:
+      workflow: "{{ workflow.name }}"
+      error_type: "{{ error.type }}"
+
+on_timeout:
+  - type: notification
+    message: "Workflow '{{ workflow.name }}' timed out after {{ workflow.timeout }}"
+  
+  - type: log
+    level: warning
+    message: "Workflow {{ workflow.name }} timed out"

@@ -1,0 +1,134 @@
+# Default values for workflow-automation Helm chart
+
+replicaCount: 1
+
+image:
+  repository: workflow-automation
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+# RBAC configuration
+rbac:
+  create: true
+
+podAnnotations: {}
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  fsGroup: 1000
+
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: false
+  allowPrivilegeEscalation: false
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: workflow-automation.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+  requests:
+    cpu: 500m
+    memory: 512Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+persistence:
+  enabled: true
+  data:
+    storageClass: "standard"
+    accessMode: ReadWriteOnce
+    size: 2Gi
+  logs:
+    storageClass: "standard"
+    accessMode: ReadWriteOnce
+    size: 5Gi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# Application configuration
+workflow:
+  maxConcurrent: 5
+  timeout: 3600
+  retryAttempts: 3
+  notifications:
+    enabled: true
+
+# Redis configuration
+redis:
+  enabled: true
+  image:
+    repository: redis
+    tag: "7-alpine"
+  persistence:
+    enabled: true
+    size: 1Gi
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+
+# LLM configuration
+llm:
+  baseUrl: "http://ollama:11434"
+  model: "llama2"
+  temperature: 0.7
+
+# Logging configuration
+logging:
+  level: INFO
+  format: json
+  retentionDays: 30
+
+# Metrics configuration
+metrics:
+  enabled: true
+  port: 9090
+
+# Environment variables
+env:
+  - name: WORKFLOW_PORT
+    value: "8080"
+  - name: LOG_LEVEL
+    value: "INFO"
+  - name: ENABLE_METRICS
+    value: "true"
+

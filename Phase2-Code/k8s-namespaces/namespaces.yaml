@@ -1,0 +1,27 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: reporting
+  labels:
+    name: reporting
+    purpose: ai-employee
+    phase: phase4
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: task-manager
+  labels:
+    name: task-manager
+    purpose: ai-employee
+    phase: phase4
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: workflow
+  labels:
+    name: workflow
+    purpose: ai-employee
+    phase: phase4

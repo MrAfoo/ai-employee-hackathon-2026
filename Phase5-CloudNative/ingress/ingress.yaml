@@ -1,0 +1,155 @@
+# =============================================================================
+# Hackathon Ingress Configuration
+# =============================================================================
+# NAMESPACE USAGE NOTES:
+#
+# Current deployment: All services are in the 'default' namespace.
+# This ingress routes to services within the 'default' namespace.
+#
+# If services move to separate namespaces (task-manager, workflow, reporting),
+# Kubernetes Ingress does NOT natively support cross-namespace backends.
+# Use one of these approaches:
+#
+# Option A: ExternalName Service (recommended for Kind/Minikube)
+#   Create a proxy service in the ingress namespace pointing to the target:
+#   ---
+#   apiVersion: v1
+#   kind: Service
+#   metadata:
+#     name: task-manager-proxy
+#     namespace: default
+#   spec:
+#     type: ExternalName
+#     externalName: task-manager.task-manager.svc.cluster.local
+#     ports:
+#     - port: 8080
+#
+# Option B: Deploy an Ingress resource inside each namespace separately.
+#   Each namespace gets its own Ingress routing to its local service.
+#
+# Option C: Use Gateway API or a service mesh (Istio, Linkerd)
+#   Provides full cross-namespace traffic management.
+#
+# Current namespace mapping:
+#   /task      -> default/task-manager:8080
+#   /workflow  -> default/workflow-automation:8080
+#   /reporting -> default/reporting-agent:8080
+#
+# Per-namespace ingresses (below) use host-based routing:
+#   task-manager.local  -> task-manager namespace (requires /etc/hosts entry)
+#   workflow.local      -> workflow namespace
+#   reporting.local     -> reporting namespace
+# =============================================================================
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: hackathon-ingress
+  namespace: default
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+  labels:
+    phase: phase5
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: localhost
+    http:
+      paths:
+      - path: /reporting(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: reporting-agent
+            port:
+              number: 8080
+      - path: /task(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: task-manager
+            port:
+              number: 8080
+      - path: /workflow(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: workflow-automation
+            port:
+              number: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: reporting-ingress
+  namespace: reporting
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+  labels:
+    phase: phase5
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: reporting.local
+    http:
+      paths:
+      - path: /(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: reporting-agent
+            port:
+              number: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: task-manager-ingress
+  namespace: task-manager
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+  labels:
+    phase: phase5
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: task-manager.local
+    http:
+      paths:
+      - path: /(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: task-manager
+            port:
+              number: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: workflow-ingress
+  namespace: workflow
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+  labels:
+    phase: phase5
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: workflow.local
+    http:
+      paths:
+      - path: /(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: workflow-automation
+            port:
+              number: 8080

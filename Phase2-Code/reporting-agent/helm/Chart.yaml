@@ -1,0 +1,15 @@
+apiVersion: v2
+name: reporting-agent
+description: A Helm chart for Reporting Agent AI Employee
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+keywords:
+  - ai
+  - reporting
+  - analytics
+  - automation
+maintainers:
+  - name: Reporting Agent Team
+    email: team@example.com
+dependencies: []

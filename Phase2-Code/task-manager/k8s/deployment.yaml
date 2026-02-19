@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: task-manager
+  labels:
+    app: task-manager
+    component: ai-employee
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: task-manager
+  template:
+    metadata:
+      labels:
+        app: task-manager
+    spec:
+      serviceAccountName: task-manager
+      securityContext:
+        fsGroup: 2000
+      containers:
+      - name: task-manager
+        image: task-manager:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+          name: http
+        env:
+        - name: LLM_BASE_URL
+          value: "http://ollama:11434"
+        - name: LLM_MODEL
+          value: "llama2"
+        - name: TASK_MANAGER_PORT
+          value: "8080"
+        - name: TASK_MANAGER_DATA_DIR
+          value: "/app/data"
+        - name: DAILY_REPORT_TIME
+          value: "09:00"
+        - name: LOG_LEVEL
+          value: "INFO"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 250m
+            memory: 256Mi
+        volumeMounts:
+        - name: data
+          mountPath: /app/data
+        securityContext:
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: false
+          runAsNonRoot: true
+          runAsUser: 1000
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: task-manager-pvc

@@ -1,0 +1,48 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: monitoring-scripts
+  namespace: default
+  labels:
+    phase: phase5
+data:
+  check-hpa.sh: |
+    #!/bin/bash
+    echo "=== Horizontal Pod Autoscaler Status ==="
+    kubectl get hpa --all-namespaces
+    echo ""
+    echo "=== Detailed HPA Information ==="
+    kubectl describe hpa -n task-manager
+    kubectl describe hpa -n workflow
+    kubectl describe hpa -n reporting
+  
+  check-logs.sh: |
+    #!/bin/bash
+    echo "=== Task Manager Logs ==="
+    kubectl logs -n task-manager -l app=task-manager --tail=50
+    echo ""
+    echo "=== Workflow Automation Logs ==="
+    kubectl logs -n workflow -l app=workflow-automation --tail=50
+    echo ""
+    echo "=== Reporting Agent Logs ==="
+    kubectl logs -n reporting -l app=reporting-agent --tail=50
+  
+  check-pods.sh: |
+    #!/bin/bash
+    echo "=== All Pods Status ==="
+    kubectl get pods --all-namespaces
+    echo ""
+    echo "=== Resource Usage ==="
+    kubectl top pods --all-namespaces
+  
+  check-services.sh: |
+    #!/bin/bash
+    echo "=== Services ==="
+    kubectl get services --all-namespaces
+    echo ""
+    echo "=== Ingress ==="
+    kubectl get ingress --all-namespaces
+    echo ""
+    echo "=== Endpoints ==="
+    kubectl get endpoints --all-namespaces

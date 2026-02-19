@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Employee Hackathon 2026 - Dashboard</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      min-height: 100vh;
+      color: #fff;
+      padding: 40px 20px;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    header h1 {
+      font-size: 2.8rem;
+      color: #ffffff;
+      margin-bottom: 10px;
+    }
+    header h1 .emoji {
+      font-style: normal;
+      -webkit-text-fill-color: initial;
+      background: none;
+    }
+    header p {
+      color: #a5b4fc;
+      font-size: 1.1rem;
+    }
+    .status-bar {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 48px;
+      flex-wrap: wrap;
+    }
+    .status-badge {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 999px;
+      padding: 8px 20px;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: #34d399; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 28px;
+      max-width: 1200px;
+      margin: 0 auto 48px;
+    }
+    .card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 32px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+    .card-icon { font-size: 2.5rem; margin-bottom: 16px; }
+    .card h2 { font-size: 1.4rem; margin-bottom: 8px; color: #e0e7ff; }
+    .card p { color: #94a3b8; font-size: 0.9rem; line-height: 1.6; margin-bottom: 24px; }
+    .btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn {
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: opacity 0.2s;
+      cursor: pointer;
+      border: none;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-primary { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #fff; }
+    .btn-secondary { background: rgba(255,255,255,0.08); color: #e0e7ff; border: 1px solid rgba(255,255,255,0.15); }
+    .btn-green { background: linear-gradient(135deg, #059669, #34d399); color: #fff; }
+    .btn-blue { background: linear-gradient(135deg, #2563eb, #60a5fa); color: #fff; }
+    .tag {
+      display: inline-block;
+      background: rgba(99,102,241,0.2);
+      border: 1px solid rgba(99,102,241,0.4);
+      color: #a5b4fc;
+      font-size: 0.75rem;
+      padding: 3px 10px;
+      border-radius: 999px;
+      margin-bottom: 16px;
+    }
+    .health-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 16px;
+      font-size: 0.82rem;
+      color: #64748b;
+    }
+    .health-dot { width: 8px; height: 8px; border-radius: 50%; background: #64748b; }
+    .health-dot.ok { background: #34d399; }
+    .section-title {
+      text-align: center;
+      font-size: 1.6rem;
+      color: #e0e7ff;
+      margin-bottom: 28px;
+    }
+    .obs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto 48px;
+    }
+    .obs-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 24px;
+    }
+    .obs-card h3 { font-size: 1rem; margin-bottom: 8px; color: #c7d2fe; }
+    .obs-card p { font-size: 0.82rem; color: #64748b; margin-bottom: 16px; }
+    .quick-start {
+      max-width: 900px;
+      margin: 0 auto 48px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 32px;
+    }
+    .quick-start h2 { font-size: 1.4rem; margin-bottom: 20px; color: #e0e7ff; }
+    pre {
+      background: rgba(0,0,0,0.5);
+      border-radius: 8px;
+      padding: 16px;
+      font-size: 0.85rem;
+      color: #7dd3fc;
+      overflow-x: auto;
+      margin-bottom: 12px;
+    }
+    footer {
+      text-align: center;
+      color: #475569;
+      font-size: 0.82rem;
+      margin-top: 48px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1><span style="font-size:2.8rem;">🤖</span> AI Employee Hackathon 2026</h1>
+  <p>Autonomous AI Employees managing tasks, workflows, and reports</p>
+</header>
+
+<div class="status-bar">
+  <div class="status-badge"><div class="dot"></div> Task Manager Running</div>
+  <div class="status-badge"><div class="dot"></div> Workflow Automation Running</div>
+  <div class="status-badge"><div class="dot"></div> Reporting Agent Running</div>
+</div>
+
+<div class="grid">
+
+  <!-- Task Manager -->
+  <div class="card">
+    <div class="card-icon">📋</div>
+    <span class="tag">AI Employee #1</span>
+    <h2>Task Manager</h2>
+    <p>Autonomously manages tasks, deadlines, and priorities. Accepts tasks via API, prioritizes by urgency, and flags overdue items.</p>
+    <div class="btn-group">
+      <a class="btn btn-primary" href="http://localhost:8081/" target="_blank">🌐 Open Service</a>
+      <a class="btn btn-secondary" href="http://localhost:8081/docs" target="_blank">📖 Swagger Docs</a>
+      <a class="btn btn-green" href="http://localhost:8081/demo/tasks" target="_blank">🎯 Demo Data</a>
+    </div>
+    <div class="health-indicator">
+      <div class="health-dot ok" id="tm-health"></div>
+      <span id="tm-status">Checking health...</span>
+    </div>
+  </div>
+
+  <!-- Workflow Automation -->
+  <div class="card">
+    <div class="card-icon">⚙️</div>
+    <span class="tag">AI Employee #2</span>
+    <h2>Workflow Automation</h2>
+    <p>Automates repetitive workflows. Monitors triggers, executes predefined scripts, logs all actions, and sends completion notifications.</p>
+    <div class="btn-group">
+      <a class="btn btn-primary" href="http://localhost:8082/" target="_blank">🌐 Open Service</a>
+      <a class="btn btn-secondary" href="http://localhost:8082/docs" target="_blank">📖 Swagger Docs</a>
+      <a class="btn btn-blue" href="http://localhost:8082/demo/workflows" target="_blank">🎯 Demo Data</a>
+    </div>
+    <div class="health-indicator">
+      <div class="health-dot ok" id="wa-health"></div>
+      <span id="wa-status">Checking health...</span>
+    </div>
+  </div>
+
+  <!-- Reporting Agent -->
+  <div class="card">
+    <div class="card-icon">📊</div>
+    <span class="tag">AI Employee #3</span>
+    <h2>Reporting Agent</h2>
+    <p>Autonomously generates daily and weekly reports. Collects data from other services, exports to Markdown/JSON, and alerts on anomalies.</p>
+    <div class="btn-group">
+      <a class="btn btn-primary" href="http://localhost:8083/" target="_blank">🌐 Open Service</a>
+      <a class="btn btn-secondary" href="http://localhost:8083/docs" target="_blank">📖 Swagger Docs</a>
+      <a class="btn btn-primary" href="http://localhost:8083/demo/reports" target="_blank">🎯 Demo Data</a>
+    </div>
+    <div class="health-indicator">
+      <div class="health-dot ok" id="ra-health"></div>
+      <span id="ra-status">Checking health...</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- Observability -->
+<h2 class="section-title">🔭 Observability</h2>
+<div class="obs-grid">
+  <div class="obs-card">
+    <h3>📈 Prometheus</h3>
+    <p>Metrics collection for all AI Employees</p>
+    <a class="btn btn-secondary" href="http://localhost:9090" target="_blank">Open Prometheus</a>
+  </div>
+  <div class="obs-card">
+    <h3>📊 Grafana</h3>
+    <p>Dashboard for CPU, Memory & Request metrics</p>
+    <a class="btn btn-secondary" href="http://localhost:3000" target="_blank">Open Grafana</a>
+  </div>
+  <div class="obs-card">
+    <h3>🔍 HPA Status</h3>
+    <p>Horizontal Pod Autoscaler monitoring</p>
+    <button class="btn btn-secondary" onclick="alert('Run: kubectl get hpa --all-namespaces')">View HPAs</button>
+  </div>
+  <div class="obs-card">
+    <h3>📜 Pod Logs</h3>
+    <p>Real-time logs from all services</p>
+    <button class="btn btn-secondary" onclick="alert('Run: kubectl logs -n default -l app.kubernetes.io/name=task-manager')">View Logs</button>
+  </div>
+</div>
+
+<!-- Quick Start -->
+<div class="quick-start">
+  <h2>🚀 Quick Start for Judges</h2>
+  <pre># 1. Clone and navigate
+cd F:\vs\ai-employee\AI-Employee-Hackathon-2026
+
+# 2. Build Docker images
+docker build -t task-manager:latest ./Phase2-Code/task-manager
+docker build -t workflow-automation:latest ./Phase2-Code/workflow-automation
+docker build -t reporting-agent:latest ./Phase2-Code/reporting-agent
+
+# 3. Deploy Phase 4 (namespaces + helm)
+.\deploy-all.ps1
+
+# 4. Deploy Phase 5 (HPA + Ingress)
+cd Phase5-CloudNative && .\deploy-phase5.ps1
+
+# 5. Start port-forwards
+cd .. && .\port-forward.ps1
+
+# 6. Open this landing page
+start http://localhost:8080</pre>
+</div>
+
+<footer>
+  <p>AI Employee Hackathon 2026 &mdash; Built with FastAPI, Docker, Kubernetes, Helm</p>
+</footer>
+
+<script>
+  // Health check for all services
+  const services = [
+    { id: 'tm', url: 'http://localhost:8081/health', label: 'Task Manager' },
+    { id: 'wa', url: 'http://localhost:8082/health', label: 'Workflow Automation' },
+    { id: 'ra', url: 'http://localhost:8083/health', label: 'Reporting Agent' },
+  ];
+
+  async function checkHealth(svc) {
+    const dot = document.getElementById(`${svc.id}-health`);
+    const status = document.getElementById(`${svc.id}-status`);
+    try {
+      const res = await fetch(svc.url, { signal: AbortSignal.timeout(3000) });
+      if (res.ok) {
+        dot.classList.add('ok');
+        status.textContent = `${svc.label}: ✅ Healthy`;
+      } else {
+        dot.style.background = '#f59e0b';
+        status.textContent = `${svc.label}: ⚠️ Degraded`;
+      }
+    } catch {
+      dot.style.background = '#ef4444';
+      status.textContent = `${svc.label}: ❌ Unreachable`;
+    }
+  }
+
+  // Check all services on load and every 30s
+  services.forEach(checkHealth);
+  setInterval(() => services.forEach(checkHealth), 30000);
+</script>
+
+</body>
+</html>

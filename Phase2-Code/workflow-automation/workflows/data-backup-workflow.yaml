@@ -1,0 +1,116 @@
+name: data-backup
+description: Automated data backup and verification workflow
+version: "1.0"
+
+triggers:
+  - type: schedule
+    cron: "0 0 * * *"  # Daily at midnight
+    enabled: true
+
+parameters:
+  - name: backup_retention_days
+    type: integer
+    required: false
+    default: 7
+  
+  - name: compression_level
+    type: integer
+    required: false
+    default: 6
+    min: 1
+    max: 9
+
+steps:
+  - name: pre-backup-check
+    type: script
+    description: Check available disk space
+    script: |
+      #!/bin/bash
+      AVAILABLE=$(df /app/data | tail -1 | awk '{print $4}')
+      echo "Available space: ${AVAILABLE}KB"
+      if [ $AVAILABLE -lt 1048576 ]; then
+        echo "Error: Insufficient disk space (less than 1GB available)"
+        exit 1
+      fi
+      echo "Disk space check passed"
+  
+  - name: create-backup
+    type: script
+    description: Create compressed backup archive
+    script: |
+      #!/bin/bash
+      BACKUP_FILE="/app/data/backup-$(date +%Y%m%d-%H%M%S).tar.gz"
+      echo "Creating backup: $BACKUP_FILE"
+      tar -czf "$BACKUP_FILE" /app/data --exclude='*.tar.gz' 2>/dev/null || true
+      echo "Backup created: $BACKUP_FILE"
+      echo "backup_file=$BACKUP_FILE" >> $WORKFLOW_OUTPUT
+    timeout: 300s
+  
+  - name: verify-backup
+    type: script
+    description: Verify backup integrity
+    script: |
+      #!/bin/bash
+      BACKUP_FILE="{{ steps.create-backup.output.backup_file }}"
+      echo "Verifying backup: $BACKUP_FILE"
+      if [ ! -f "$BACKUP_FILE" ]; then
+        echo "Error: Backup file not found"
+        exit 1
+      fi
+      tar -tzf "$BACKUP_FILE" > /dev/null
+      BACKUP_SIZE=$(stat -f%z "$BACKUP_FILE" 2>/dev/null || stat -c%s "$BACKUP_FILE")
+      echo "Backup verified successfully (size: ${BACKUP_SIZE} bytes)"
+      echo "backup_size=$BACKUP_SIZE" >> $WORKFLOW_OUTPUT
+    timeout: 60s
+  
+  - name: cleanup-old-backups
+    type: script
+    description: Remove old backup files
+    script: |
+      #!/bin/bash
+      RETENTION_DAYS="{{ params.backup_retention_days }}"
+      echo "Cleaning up backups older than $RETENTION_DAYS days"
+      find /app/data -name "backup-*.tar.gz" -mtime +$RETENTION_DAYS -delete
+      REMAINING=$(find /app/data -name "backup-*.tar.gz" | wc -l)
+      echo "Cleanup complete. Remaining backups: $REMAINING"
+      echo "remaining_backups=$REMAINING" >> $WORKFLOW_OUTPUT
+    timeout: 60s
+  
+  - name: generate-report
+    type: llm
+    description: Generate backup summary report
+    prompt: |
+      Generate a brief backup summary report with the following information:
+      
+      - Backup file: {{ steps.create-backup.output.backup_file }}
+      - Backup size: {{ steps.verify-backup.output.backup_size }} bytes
+      - Remaining backups: {{ steps.cleanup-old-backups.output.remaining_backups }}
+      - Retention policy: {{ params.backup_retention_days }} days
+      
+      Provide the report in a concise, professional format.
+    model: llama2
+
+on_success:
+  - type: log
+    level: info
+    message: "Backup workflow completed successfully"
+  
+  - type: notification
+    message: |
+      ✅ Daily Backup Completed
+      
+      {{ steps.generate-report.output }}
+
+on_failure:
+  - type: log
+    level: error
+    message: "Backup workflow failed: {{ error.message }}"
+  
+  - type: notification
+    message: |
+      ❌ Backup Failed
+      
+      Error: {{ error.message }}
+      Step: {{ error.step }}
+      Time: {{ workflow.timestamp }}
+    priority: high

@@ -1,0 +1,63 @@
+{{- if .Values.reporting.weeklyReport.enabled -}}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "reporting-agent.fullname" . }}-weekly-report
+  labels:
+    {{- include "reporting-agent.labels" . | nindent 4 }}
+    component: weekly-report
+spec:
+  schedule: {{ .Values.reporting.weeklyReport.schedule | quote }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            {{- include "reporting-agent.selectorLabels" . | nindent 12 }}
+            component: weekly-report
+        spec:
+          serviceAccountName: {{ include "reporting-agent.serviceAccountName" . }}
+          restartPolicy: OnFailure
+          containers:
+          - name: weekly-report
+            image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+            imagePullPolicy: {{ .Values.image.pullPolicy }}
+            command:
+              - python
+              - -m
+              - src.cli
+              - generate-report
+              - --type
+              - weekly
+            env:
+              - name: LLM_BASE_URL
+                value: {{ .Values.llm.baseUrl | quote }}
+              - name: LLM_MODEL
+                value: {{ .Values.llm.model | quote }}
+              - name: REPORTS_DIR
+                value: /app/reports
+              - name: TASK_MANAGER_URL
+                value: {{ .Values.integrations.taskManager.url | quote }}
+              - name: WORKFLOW_AUTOMATION_URL
+                value: {{ .Values.integrations.workflowAutomation.url | quote }}
+            volumeMounts:
+              - name: reports
+                mountPath: /app/reports
+              - name: data
+                mountPath: /app/data
+              - name: config
+                mountPath: /app/config
+          volumes:
+            - name: reports
+              persistentVolumeClaim:
+                claimName: {{ include "reporting-agent.fullname" . }}-reports-pvc
+            - name: data
+              persistentVolumeClaim:
+                claimName: {{ include "reporting-agent.fullname" . }}-data-pvc
+            - name: config
+              configMap:
+                name: {{ include "reporting-agent.fullname" . }}-config
+{{- end }}

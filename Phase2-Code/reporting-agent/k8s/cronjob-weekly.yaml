@@ -1,0 +1,70 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: reporting-agent-weekly-report
+  labels:
+    app: reporting-agent
+    component: weekly-report
+spec:
+  schedule: "0 9 * * 1"  # Every Monday at 9 AM
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: reporting-agent
+            component: weekly-report
+        spec:
+          serviceAccountName: reporting-agent
+          restartPolicy: OnFailure
+          containers:
+          - name: weekly-report
+            image: reporting-agent:latest
+            imagePullPolicy: IfNotPresent
+            command:
+              - python
+              - -m
+              - src.cli
+              - generate-report
+              - --type
+              - weekly
+            env:
+              - name: LLM_BASE_URL
+                value: "http://ollama:11434"
+              - name: LLM_MODEL
+                value: "llama2"
+              - name: REPORTS_DIR
+                value: /app/reports
+              - name: TASK_MANAGER_URL
+                value: "http://task-manager:8080"
+              - name: WORKFLOW_AUTOMATION_URL
+                value: "http://workflow-automation:8080"
+              - name: LOG_LEVEL
+                value: "INFO"
+            volumeMounts:
+              - name: reports
+                mountPath: /app/reports
+              - name: data
+                mountPath: /app/data
+              - name: config
+                mountPath: /app/config
+            resources:
+              requests:
+                cpu: 500m
+                memory: 1Gi
+              limits:
+                cpu: 1000m
+                memory: 2Gi
+          volumes:
+            - name: reports
+              persistentVolumeClaim:
+                claimName: reporting-agent-reports-pvc
+            - name: data
+              persistentVolumeClaim:
+                claimName: reporting-agent-data-pvc
+            - name: config
+              configMap:
+                name: reporting-agent-config

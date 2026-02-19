@@ -1,0 +1,167 @@
+# Default values for reporting-agent Helm chart
+
+replicaCount: 1
+
+image:
+  repository: reporting-agent
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  fsGroup: 1000
+
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: false
+  allowPrivilegeEscalation: false
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: reporting-agent.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+  requests:
+    cpu: 500m
+    memory: 512Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+persistence:
+  enabled: true
+  reports:
+    storageClass: "standard"
+    accessMode: ReadWriteOnce
+    size: 5Gi
+  data:
+    storageClass: "standard"
+    accessMode: ReadWriteOnce
+    size: 2Gi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# Application configuration
+reporting:
+  dailyReportTime: "09:00"
+  weeklyReportDay: "monday"
+  weeklyReportTime: "09:00"
+  retentionDays: 90
+  formats:
+    - markdown
+    - json
+  enableAIInsights: true
+
+  dailyReport:
+    enabled: true
+    schedule: "0 9 * * *"   # every day at 9 AM
+
+  weeklyReport:
+    enabled: true
+    schedule: "0 9 * * 1"   # every Monday at 9 AM
+
+# Anomaly detection configuration
+anomalyDetection:
+  enabled: true
+  sensitivity: medium   # optional, you can define levels like low/medium/high
+  thresholds:
+    failedWorkflows: 5
+    overdueTasks: 10
+
+# Data sources configuration
+dataSources:
+  taskManager:
+    enabled: true
+    url: "http://task-manager:8080"
+  workflowAutomation:
+    enabled: true
+    url: "http://workflow-automation:8080"
+
+# Integrations configuration
+integrations:
+  taskManager:
+    url: "http://task-manager:8080"
+  workflowAutomation:
+    url: "http://workflow-automation:8080"
+
+# Alert configuration
+alerts:
+  enabled: true
+  thresholds:
+    overdueTasksPercent: 20
+    failedWorkflowsPercent: 10
+    completionRatePercent: 80
+
+# LLM configuration
+llm:
+  baseUrl: "http://ollama:11434"
+  model: "llama2"
+  temperature: 0.7
+
+# Logging configuration
+logging:
+  level: INFO
+  format: json
+  retentionDays: 30
+
+# Metrics configuration
+metrics:
+  enabled: true
+  port: 9090
+
+# Cron jobs configuration
+cronJobs:
+  daily:
+    enabled: true
+    schedule: "0 9 * * *"
+    suspend: false
+  weekly:
+    enabled: true
+    schedule: "0 9 * * 1"
+    suspend: false
+
+# Environment variables
+env:
+  - name: REPORTING_PORT
+    value: "8080"
+  - name: LOG_LEVEL
+    value: "INFO"
+  - name: ENABLE_METRICS
+    value: "true"
+

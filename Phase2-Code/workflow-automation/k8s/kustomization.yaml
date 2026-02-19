@@ -1,0 +1,18 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - serviceaccount.yaml
+  - rbac.yaml
+  - configmap.yaml
+  - pvc.yaml
+  - redis.yaml
+  - deployment.yaml
+  - service.yaml
+
+commonLabels:
+  app.kubernetes.io/name: workflow-automation
+  app.kubernetes.io/component: ai-employee
+  app.kubernetes.io/part-of: workflow-automation-system
+
+namespace: default

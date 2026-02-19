@@ -1,0 +1,41 @@
+{{- if .Values.cronJob.enabled -}}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "task-manager.fullname" . }}-daily-report
+  labels:
+    {{- include "task-manager.labels" . | nindent 4 }}
+spec:
+  schedule: {{ .Values.cronJob.schedule | quote }}
+  concurrencyPolicy: {{ .Values.cronJob.concurrencyPolicy }}
+  successfulJobsHistoryLimit: {{ .Values.cronJob.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ .Values.cronJob.failedJobsHistoryLimit }}
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            {{- include "task-manager.selectorLabels" . | nindent 12 }}
+            job-type: daily-report
+        spec:
+          restartPolicy: OnFailure
+          serviceAccountName: {{ include "task-manager.serviceAccountName" . }}
+          containers:
+          - name: daily-report
+            image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+            imagePullPolicy: {{ .Values.image.pullPolicy }}
+            command: ["python", "-m", "src.cli", "generate-daily-report"]
+            env:
+              {{- toYaml .Values.env | nindent 14 }}
+            volumeMounts:
+            {{- if .Values.persistence.enabled }}
+            - name: data
+              mountPath: {{ .Values.persistence.mountPath }}
+            {{- end }}
+          volumes:
+          {{- if .Values.persistence.enabled }}
+          - name: data
+            persistentVolumeClaim:
+              claimName: {{ include "task-manager.fullname" . }}-pvc
+          {{- end }}
+{{- end }}

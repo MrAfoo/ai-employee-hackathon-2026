@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "workflow-automation.fullname" . }}-config
+  labels:
+    {{- include "workflow-automation.labels" . | nindent 4 }}
+data:
+  app-config.yaml: |
+    workflow:
+      max_concurrent: {{ .Values.workflow.maxConcurrent }}
+      timeout: {{ .Values.workflow.timeout }}
+      retry_attempts: {{ .Values.workflow.retryAttempts }}
+      enable_notifications: {{ .Values.workflow.notifications.enabled }}
+    
+    logging:
+      level: {{ .Values.logging.level }}
+      format: {{ .Values.logging.format }}
+      retention_days: {{ .Values.logging.retentionDays }}
+    
+    monitoring:
+      enabled: {{ .Values.metrics.enabled }}
+      port: {{ .Values.metrics.port }}

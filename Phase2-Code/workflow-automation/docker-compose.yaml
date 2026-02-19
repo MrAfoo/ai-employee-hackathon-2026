@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  workflow-automation:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: workflow-automation:latest
+    container_name: workflow-automation
+    ports:
+      - "8080:8080"
+      - "9090:9090"
+    environment:
+      - LLM_BASE_URL=http://ollama:11434
+      - LLM_MODEL=llama2
+      - WORKFLOW_PORT=8080
+      - WORKFLOW_DATA_DIR=/app/data
+      - WORKFLOW_LOG_DIR=/app/logs
+      - WORKFLOW_DEFINITIONS_DIR=/app/workflows
+      - REDIS_URL=redis://redis:6379/0
+      - LOG_LEVEL=INFO
+      - ENABLE_METRICS=true
+      - METRICS_PORT=9090
+    volumes:
+      - workflow-data:/app/data
+      - workflow-logs:/app/logs
+      - ./workflows:/app/workflows:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    depends_on:
+      - redis
+      - ollama
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: workflow-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    restart: unless-stopped
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    restart: unless-stopped
+
+volumes:
+  workflow-data:
+  workflow-logs:
+  redis-data:
+  ollama-data:

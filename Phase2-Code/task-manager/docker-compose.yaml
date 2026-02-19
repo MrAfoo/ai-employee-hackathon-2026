@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  task-manager:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: task-manager:latest
+    container_name: task-manager
+    ports:
+      - "8080:8080"
+    environment:
+      - LLM_BASE_URL=http://ollama:11434
+      - LLM_MODEL=llama2
+      - TASK_MANAGER_PORT=8080
+      - TASK_MANAGER_DATA_DIR=/app/data
+      - DAILY_REPORT_TIME=09:00
+      - LOG_LEVEL=INFO
+    volumes:
+      - task-data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    depends_on:
+      - ollama
+    restart: unless-stopped
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    restart: unless-stopped
+
+volumes:
+  task-data:
+  ollama-data:
