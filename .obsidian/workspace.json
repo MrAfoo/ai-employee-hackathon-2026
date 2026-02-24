@@ -4,21 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "d818300dbf5147ba",
+        "id": "552690f4c25c6357",
         "type": "tabs",
         "children": [
           {
-            "id": "c02bc92244481787",
+            "id": "c902428bf77d49e1",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "QUICKSTART.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "QUICKSTART"
+              "title": "New tab"
             }
           }
         ]
@@ -78,7 +74,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 299.5
   },
   "right": {
     "id": "b77a3431a9607d95",
@@ -183,11 +179,44 @@
       "bases:Create new base": false
     }
   },
-  "active": "c02bc92244481787",
+  "active": "c902428bf77d49e1",
   "lastOpenFiles": [
-    "DEMO-SCRIPT.md",
+    "Vault/Plan.md",
+    "Vault/Dashboard.md",
+    "Vault/Approved/APPROVAL_REQUIRED_live_test_120442.md",
+    "Vault/Done/TEST_dashboard_update.md",
+    "Vault/Needs_Action/TEST_dashboard_update.md",
+    "orchestrator.log",
+    "BronzeTier/watchers/__pycache__/whatsapp_watcher.cpython-314.pyc",
+    "BronzeTier/watchers/__pycache__/gmail_watcher.cpython-314.pyc",
+    "BronzeTier/watchers/__pycache__/filesystem_watcher.cpython-314.pyc",
+    "BronzeTier/watchers/__pycache__/__init__.cpython-314.pyc",
+    "BronzeTier/__pycache__/error_recovery.cpython-314.pyc",
+    "BronzeTier/__pycache__/Orchestrator.cpython-314.pyc",
+    "BronzeTier/__pycache__",
+    "start_all.ps1",
+    "FEATURES.md",
+    "Vault/Approved/FINANCE_20260223_133659_Client_Payment___ACME_Corp.md",
+    "Vault/Needs_Action/EMAIL_19c89723678d020c.md",
+    "Vault/Needs_Action/EMAIL_19c899eed7233c77.md",
+    "Vault/Needs_Action/EMAIL_19c894d1e581133a.md",
+    "Vault/Company_Handbook.md",
+    "Vault/Finance_Drop/processed/bank_statement_feb2026.csv",
+    "Vault/Needs_Action/FINANCE_20260223_133659_Client_Payment___Gamma_Inc.md",
+    "Vault/Needs_Action/FINANCE_20260223_133659_Freelance_Payment___John_Doe.md",
+    "Vault/Needs_Action/FINANCE_20260223_133659_Wire_Transfer___Supplier_XYZ.md",
+    "Vault/Needs_Action/FINANCE_20260223_133659_Client_Payment___Beta_Ltd.md",
+    "Vault/Accounting/Current_Month_2026-02.md",
+    "Vault/Done/APPROVED_APPROVAL_REQUIRED_TEST_email_client_invoice_request_104459.md",
+    "GoldTier/README.md",
+    "Vault/Done/PROCESSED_TEST_whatsapp_urgent_payment.md",
+    "Vault/Done/PROCESSED_TEST_email_client_invoice_request.md",
+    "Vault/Needs_Action/TEST_email_client_invoice_request.md",
+    "Vault/Approved/APPROVAL_REQUIRED_TEST_email_client_invoice_request_104459.md",
+    "Untitled.canvas",
+    "2026-02-22.md",
+    "SilverTier/README.md",
     "QUICKSTART.md",
-    "README.md",
-    "PROJECT-GUIDE.md"
+    "DEMO-SCRIPT.md"
   ]
 }
