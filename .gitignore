@@ -1,0 +1,103 @@
+# ============================================================
+#  AI Employee – Root .gitignore
+#  NEVER commit secrets, credentials, sessions, or logs.
+# ============================================================
+
+# ── Secrets & Credentials ───────────────────────────────────
+.env
+.env.local
+.env.production
+*.env
+credentials.json
+token.json
+token_*.json
+gmail_token.json
+*_credentials.json
+*_secret.json
+service_account.json
+*.pem
+*.key
+*.p12
+*.pfx
+client_secret*.json
+
+# ── Playwright / WhatsApp sessions ──────────────────────────
+whatsapp_session/
+playwright_session/
+*_session/
+*.session
+browser_data/
+
+# ── Logs ────────────────────────────────────────────────────
+logs/
+*.log
+*.jsonl
+audit.jsonl
+errors.jsonl
+GoldTier/logs/
+PlatinumTier/logs/
+
+# ── Python ──────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+pip-wheel-metadata/
+*.whl
+.venv/
+venv/
+env/
+.env/
+ENV/
+
+# ── Node.js (MCP servers) ───────────────────────────────────
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+.npm/
+
+# ── OS files ────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+.Spotlight-V100
+.Trashes
+
+# ── Editor / IDE ────────────────────────────────────────────
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+
+# ── Obsidian (keep structure, ignore cache) ──────────────────
+.obsidian/workspace.json
+.obsidian/cache
+.trash/
+
+# ── Vault sensitive folders ──────────────────────────────────
+Vault/Accounting/
+Vault/Pending_Approval/
+Vault/Approved/
+Vault/Rejected/
+
+# ── Temp / scratch files ─────────────────────────────────────
+tmp_rovodev_*
+*.tmp
+*.bak
+*.backup
+scratch/
+
+# ── Compiled MCP binaries ────────────────────────────────────
+*.exe
+!acli.exe
+*.dll
+*.so
+*.dylib

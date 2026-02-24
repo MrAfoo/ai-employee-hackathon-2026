@@ -1,0 +1,21 @@
+# Core
+python-dotenv>=1.0.0
+groq>=0.9.0
+
+# Gmail API (OAuth2 — replaces IMAP)
+google-api-python-client>=2.131.0
+google-auth-oauthlib>=1.2.0
+google-auth-httplib2>=0.2.0
+
+# WhatsApp Web automation
+playwright>=1.44.0
+
+# Filesystem watcher
+watchdog>=3.0.0
+
+# HTTP requests (for MCP servers + social APIs)
+requests>=2.31.0
+
+# Finance watcher CSV parsing (stdlib csv is used, no extra lib needed)
+# HITL orchestrator
+markdown>=3.6

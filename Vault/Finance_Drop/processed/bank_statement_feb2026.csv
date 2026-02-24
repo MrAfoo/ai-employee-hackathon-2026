@@ -1,0 +1,12 @@
+Date,Description,Amount,Type,Balance
+2026-02-01,Opening Balance,,OPENING,5000.00
+2026-02-03,Client Payment - ACME Corp,1200.00,CREDIT,6200.00
+2026-02-05,Office Supplies - Staples,-45.00,DEBIT,6155.00
+2026-02-07,AWS Cloud Services,-89.99,DEBIT,6065.01
+2026-02-10,Client Payment - Beta Ltd,750.00,CREDIT,6815.01
+2026-02-12,Wire Transfer - Supplier XYZ,-620.00,DEBIT,6195.01
+2026-02-14,NayaPay Transfer,-110.00,DEBIT,6085.01
+2026-02-15,Freelance Payment - John Doe,500.00,CREDIT,6585.01
+2026-02-18,Google Cloud Services,-34.99,DEBIT,6550.02
+2026-02-20,Client Payment - Gamma Inc,2000.00,CREDIT,8550.02
+2026-02-22,Software Subscription,-29.99,DEBIT,8520.03

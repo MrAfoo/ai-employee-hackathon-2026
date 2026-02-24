@@ -1,0 +1,65 @@
+{
+  "servers": [
+    {
+      "name": "filesystem",
+      "comment": "Built-in Claude Code filesystem tool — points at your Obsidian vault",
+      "type": "builtin",
+      "vault_path": "./BronzeTier"
+    },
+    {
+      "name": "email",
+      "comment": "Email MCP server — send, draft, search Gmail",
+      "command": "python",
+      "args": ["../SilverTier/mcp_servers/email_mcp_server.py"],
+      "env": {
+        "SMTP_HOST": "smtp.gmail.com",
+        "SMTP_PORT": "587",
+        "SMTP_USER": "${GMAIL_EMAIL}",
+        "SMTP_PASSWORD": "${GMAIL_APP_PASSWORD}"
+      }
+    },
+    {
+      "name": "linkedin",
+      "comment": "LinkedIn MCP server — post updates, read notifications",
+      "command": "python",
+      "args": ["../SilverTier/mcp_servers/linkedin_mcp_server.py"],
+      "env": {
+        "LINKEDIN_ACCESS_TOKEN": "${LINKEDIN_ACCESS_TOKEN}",
+        "LINKEDIN_PERSON_URN": "${LINKEDIN_PERSON_URN}"
+      }
+    },
+    {
+      "name": "whatsapp",
+      "comment": "WhatsApp MCP server — send replies via Business API",
+      "command": "python",
+      "args": ["../SilverTier/mcp_servers/whatsapp_mcp_server.py"],
+      "env": {
+        "WHATSAPP_API_TOKEN": "${WHATSAPP_API_TOKEN}",
+        "WHATSAPP_PHONE_NUMBER_ID": "${WHATSAPP_PHONE_NUMBER_ID}"
+      }
+    },
+    {
+      "name": "odoo",
+      "comment": "Odoo Community MCP — invoices, P&L, accounting via JSON-RPC",
+      "command": "python",
+      "args": ["../GoldTier/mcp_servers/odoo_mcp_server.py"],
+      "env": {
+        "ODOO_URL": "${ODOO_URL}",
+        "ODOO_DB": "${ODOO_DB}",
+        "ODOO_USERNAME": "${ODOO_USERNAME}",
+        "ODOO_PASSWORD": "${ODOO_PASSWORD}"
+      }
+    },
+    {
+      "name": "social",
+      "comment": "Social media MCP — Facebook posting and summaries",
+      "command": "python",
+      "args": ["../GoldTier/mcp_servers/social_media_mcp_server.py"],
+      "env": {
+        "FACEBOOK_PAGE_ID": "${FACEBOOK_PAGE_ID}",
+        "FACEBOOK_PAGE_ACCESS_TOKEN": "${FACEBOOK_PAGE_ACCESS_TOKEN}"
+      }
+    }
+  ],
+  "comment_install": "Copy this file to ~/.config/claude-code/mcp.json (Linux/Mac) or %APPDATA%\\claude-code\\mcp.json (Windows). Environment variables are substituted from your shell or .env file."
+}
