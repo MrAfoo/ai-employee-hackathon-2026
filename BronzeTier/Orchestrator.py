@@ -176,7 +176,7 @@ class Orchestrator:
 
         # WhatsApp
         try:
-            wa = WhatsAppWatcher(str(self.vault), WHATSAPP_SESSION)
+            wa = WhatsAppWatcher(str(self.vault), headless=True)
             self._start_watcher_thread(wa, "WhatsAppWatcher")
         except Exception as e:
             log.warning("WhatsApp watcher failed to start: %s", e)

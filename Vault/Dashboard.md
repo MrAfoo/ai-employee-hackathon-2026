@@ -1,60 +1,51 @@
 # 🤖 AI Employee Dashboard
-> **Last updated:** 2026-02-24 10:02:11 (auto-updated by Orchestrator)
 
----
+> **Last Updated:** 2026-02-24 12:20:50 | **Status:** 🟢 Running | **Model:** llama-3.3-70b-versatile
 
-## 💰 Bank Balance
-| Account | Balance | Source |
-|---------|---------|--------|
-| Business Checking | — | Accounting/Current_Month |
-
----
-
-## 📬 Inbox Summary
-| Folder | Count |
+## 📊 System Overview
+| Metric | Value |
 |--------|-------|
-| 🔴 Needs Action | 7 |
-| ⏳ Pending Approval | 0 |
-| ✅ Done (total) | 4 |
+| 🔴 Needs Action | 7 files |
+| ⏳ Pending Approval | 1 files |
+| ✅ Done Today | 6 files |
+| 🧠 Last Reasoning | 2026-02-24 12:20:50 |
+| 📈 Urgency Level | HIGH |
 
----
+## 💡 Latest Summary
+> Multiple high-priority emails and payments require attention
 
-## 🔴 Needs Action (latest 5)
+## 🔴 Needs Action
 | File | Urgency | Detected |
 |------|---------|----------|
-| EMAIL_19c89723678d020c | 🔴 | 2026-02-24 09:57 |
-| EMAIL_19c899eed7233c77 | 🔴 | 2026-02-24 09:57 |
-| EMAIL_19c894d1e581133a | 🔴 | 2026-02-24 09:57 |
-| FINANCE_20260223_133659_Client_Payment___Gamma_Inc | 🔴 | 2026-02-23 13:36 |
-| FINANCE_20260223_133659_Freelance_Payment___John_D | 🔴 | 2026-02-23 13:36 |
+| EMAIL_19c894d1e581133a.md | HIGH | 2026-02-24 12:20:50 |
+| EMAIL_19c89723678d020c.md | HIGH | 2026-02-24 12:20:50 |
+| EMAIL_19c899eed7233c77.md | HIGH | 2026-02-24 12:20:50 |
+| FINANCE_20260223_133659_Client_Payment___Beta_Ltd. | HIGH | 2026-02-24 12:20:50 |
+| FINANCE_20260223_133659_Client_Payment___Gamma_Inc | HIGH | 2026-02-24 12:20:50 |
 
----
-
-## ⏳ Pending Your Approval (latest 5)
+## ⏳ Pending Your Approval
 | File | Amount | Status |
 |------|--------|--------|
-| — | — | — |
+| APPROVAL_REQUIRED_20260224_122050.md | — | Pending review |
 
----
-
-## ✅ Recently Completed (latest 5)
-| File | Outcome |
-|------|---------|
-| TEST_dashboard_update | ✔ processed |
-| PROCESSED_TEST_email_client_invoice_request | ✔ processed |
-| PROCESSED_TEST_whatsapp_urgent_payment | ✔ processed |
-| APPROVED_APPROVAL_REQUIRED_TEST_email_client_invoi | ✅ approved |
-
----
+## ✅ Recently Completed
+| File | Status |
+|------|--------|
+| APPROVED_APPROVAL_REQUIRED_live_test_120442.md | Processed |
+| APPROVED_APPROVAL_REQUIRED_TEST_email_client_invoi | Processed |
+| APPROVED_FINANCE_20260223_133659_Client_Payment___ | Processed |
+| PROCESSED_TEST_email_client_invoice_request.md | Processed |
+| PROCESSED_TEST_whatsapp_urgent_payment.md | Processed |
 
 ## 🏥 System Health
 | Component | Status |
 |-----------|--------|
-| Orchestrator | 🔴 Running (0 watcher threads) |
+| Groq API (llama-3.3-70b-versatile) | 🟢 Connected |
 | Gmail Watcher | 🟢 Active |
-| WhatsApp Watcher | 🟡 Read-only (Playwright) |
 | Finance Watcher | 🟢 Active |
-| Groq API | 🟢 llama-3.3-70b-versatile |
+| WhatsApp Watcher | 🟡 Read-Only (Playwright) |
+| HITL Orchestrator | 🟢 Monitoring |
+| Vault Sync | 🟢 OK |
 
 ---
-*Single writer: Local Orchestrator | Vault: F:\vs\ai-employee\AI-Employee-Hackathon-2026\Vault*
+*Auto-updated by AI Employee Orchestrator*

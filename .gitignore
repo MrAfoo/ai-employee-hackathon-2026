@@ -28,10 +28,13 @@ playwright_session/
 *.session
 browser_data/
 
-# ── Logs ────────────────────────────────────────────────────
+# ── Logs ────────────────────────────────────────────────
 logs/
+**/logs/
 *.log
 *.jsonl
+email_mcp.log
+orchestrator.log
 audit.jsonl
 errors.jsonl
 GoldTier/logs/
