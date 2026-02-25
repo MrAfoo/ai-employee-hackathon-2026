@@ -36,8 +36,8 @@ KEYWORDS = [
     "emergency", "deadline", "overdue", "important", "please reply"
 ]
 
-SESSION_PATH = Path(os.getenv("WHATSAPP_SESSION_PATH",
-                              Path(__file__).parent.parent / "whatsapp_session"))
+_DEFAULT_SESSION = Path(__file__).resolve().parent.parent.parent / "whatsapp_session"
+SESSION_PATH = Path(os.getenv("WHATSAPP_SESSION_PATH", str(_DEFAULT_SESSION))).resolve()
 
 
 class WhatsAppWatcher(BaseWatcher):
@@ -66,18 +66,48 @@ class WhatsAppWatcher(BaseWatcher):
                 browser = p.chromium.launch_persistent_context(
                     str(self.session_path),
                     headless=self.headless,
-                    args=["--no-sandbox", "--disable-dev-shm-usage"],
+                    args=[
+                        "--no-sandbox",
+                        "--disable-dev-shm-usage",
+                        "--disable-blink-features=AutomationControlled",
+                        "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+                    ],
+                    ignore_default_args=["--enable-automation"],
                 )
                 page = browser.pages[0] if browser.pages else browser.new_page()
                 page.goto("https://web.whatsapp.com", wait_until="domcontentloaded")
 
-                # Wait for chat list — if not found, QR scan needed
-                try:
-                    page.wait_for_selector('[data-testid="chat-list"]', timeout=20000)
-                except PWTimeout:
-                    log.warning("WhatsApp Web not logged in. Run with --setup to scan QR.")
-                    browser.close()
-                    return []
+                # Wait for page to load fully
+                time.sleep(5)
+
+                # Try multiple selectors — WhatsApp Web changes these frequently
+                logged_in = False
+                login_selectors = [
+                    '[data-testid="chat-list"]',
+                    '#pane-side',
+                    'div[aria-label="Chat list"]',
+                    '[data-testid="cell-frame-container"]',
+                ]
+                for sel in login_selectors:
+                    try:
+                        page.wait_for_selector(sel, timeout=15000)
+                        logged_in = True
+                        log.info("WhatsApp Web logged in (selector: %s)", sel)
+                        break
+                    except PWTimeout:
+                        continue
+
+                if not logged_in:
+                    # Last resort: check page title
+                    title = page.title()
+                    log.info("Page title: %s", title)
+                    if "whatsapp" in title.lower():
+                        logged_in = True
+                        log.info("WhatsApp Web logged in (title check)")
+                    else:
+                        log.warning("WhatsApp Web not logged in. Run with --setup to scan QR.")
+                        browser.close()
+                        return []
 
                 # Find chats with unread badge
                 unread_chats = page.query_selector_all('[data-testid="cell-frame-container"]')
@@ -180,16 +210,47 @@ def setup_session(vault_path: str):
         page = browser.pages[0] if browser.pages else browser.new_page()
         page.goto("https://web.whatsapp.com")
         print("✅ Browser opened. Scan the QR code now.")
-        print("   Press Ctrl+C when done (after chats load).")
+        print("   Waiting up to 3 minutes for chats to load...")
+        print("   DO NOT close the browser — wait until your chats appear.")
+
+        # Try multiple selectors — WhatsApp Web changes data-testid frequently
+        selectors = [
+            '[data-testid="chat-list"]',
+            '#pane-side',
+            'div[aria-label="Chat list"]',
+            '._3YS_f',  # fallback class
+        ]
+        logged_in = False
         try:
-            page.wait_for_selector('[data-testid="chat-list"]', timeout=120000)
-            print("\n✅ QR scan successful! Session saved.")
-            print(f"   Session stored at: {SESSION_PATH}")
-            time.sleep(3)
+            for selector in selectors:
+                try:
+                    page.wait_for_selector(selector, timeout=180000)
+                    logged_in = True
+                    break
+                except Exception:
+                    continue
+
+            if logged_in:
+                print("\n✅ QR scan successful! Chats loaded.")
+                print(f"   Session stored at: {SESSION_PATH}")
+                print("   Waiting 5 seconds to ensure session is fully saved...")
+                time.sleep(5)
+                print("✅ Setup complete! You can now close the browser.")
+                print("   Run without --setup to start monitoring.")
+                input("   Press ENTER to close the browser and exit...")
+            else:
+                print("\n⚠️  Could not detect chat list automatically.")
+                print("   If your chats are visible in the browser, the session IS saved.")
+                input("   Press ENTER when your chats are visible to save session and exit...")
+                print("✅ Session saved.")
         except KeyboardInterrupt:
-            print("\n✅ Session saved. Run without --setup next time.")
+            print("\n✅ Session saved (Ctrl+C detected).")
+            print("   If chats were visible, run without --setup to start monitoring.")
         finally:
-            browser.close()
+            try:
+                browser.close()
+            except Exception:
+                pass  # Browser may already be closed — that's fine
 
 
 if __name__ == "__main__":

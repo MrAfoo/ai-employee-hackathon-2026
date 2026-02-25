@@ -24,7 +24,14 @@ import time
 from datetime import datetime
 from pathlib import Path
 
+# ── Ensure BronzeTier/ is in path regardless of working directory ──────────────
+_BRONZE_DIR = Path(__file__).resolve().parent
+if str(_BRONZE_DIR) not in sys.path:
+    sys.path.insert(0, str(_BRONZE_DIR))
+
 from dotenv import load_dotenv
+# Load .env from BronzeTier/ directory explicitly
+load_dotenv(dotenv_path=_BRONZE_DIR / ".env")
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 
@@ -39,8 +46,6 @@ from watchers.filesystem_watcher import DropFolderHandler
 from watchers.finance_watcher import FinanceWatcher
 from watchers.gmail_watcher import GmailWatcher
 from watchers.whatsapp_watcher import WhatsAppWatcher
-
-load_dotenv()
 
 # ── Logging Setup ──────────────────────────────────────────────────────────────
 logging.basicConfig(

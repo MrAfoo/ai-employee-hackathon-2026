@@ -22,9 +22,14 @@ import time
 from datetime import datetime
 from pathlib import Path
 
+import sys
 from dotenv import load_dotenv
 
-load_dotenv()
+# Ensure BronzeTier/ is in path and .env is loaded correctly
+_BRONZE_DIR = Path(__file__).resolve().parent
+if str(_BRONZE_DIR) not in sys.path:
+    sys.path.insert(0, str(_BRONZE_DIR))
+load_dotenv(dotenv_path=_BRONZE_DIR / ".env")
 
 log = logging.getLogger("WatchdogMonitor")
 logging.basicConfig(
@@ -125,10 +130,13 @@ class WatchdogMonitor:
     def start_orchestrator(self) -> subprocess.Popen:
         """Launch Orchestrator.py as a subprocess."""
         log.info("Starting Orchestrator.py (restart #%d)...", self._restart_count)
+        # Always run from BronzeTier/ so relative imports work correctly
+        bronze_dir = Path(__file__).resolve().parent
         proc = subprocess.Popen(
             [sys.executable, str(ORCHESTRATOR_SCRIPT)],
             stdout=sys.stdout,
             stderr=sys.stderr,
+            cwd=str(bronze_dir),
         )
         _write_jsonl(ERROR_LOG_PATH, {
             "timestamp": datetime.now().isoformat(),
