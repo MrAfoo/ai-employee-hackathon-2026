@@ -1,125 +1,181 @@
-# 🚀 AI Employee Hackathon 2026 — Quick Start Guide
+# AI Employee — Quick Start Guide
 
-> Get the project running on your laptop in under 10 minutes.
+> Get your AI Employee running in under 10 minutes.
 
 ---
 
-## 🖥️ What You Need (Install These First)
+## What You Need
 
-| Tool | Purpose | Download |
+| Tool | Version | Download |
 |------|---------|----------|
-| **Docker Desktop** | Run containers | https://www.docker.com/products/docker-desktop |
-| **Kind** | Local Kubernetes cluster | https://kind.sigs.k8s.io/docs/user/quick-start/#installation |
-| **kubectl** | Control Kubernetes | https://kubernetes.io/docs/tasks/tools/ |
-| **Helm** | Deploy Helm charts | https://helm.sh/docs/intro/install/ |
-| **Git** | Clone the repo | https://git-scm.com/downloads |
-
-> ✅ Make sure Docker Desktop is **running** before you start.
+| Python | 3.10+ | https://python.org |
+| Git | Any | https://git-scm.com |
+| Obsidian (optional) | Any | https://obsidian.md |
 
 ---
 
-## 📥 Step 1 — Clone the Repo
+## Step 1 — Clone the Repo
 
 ```powershell
-git clone https://github.com/YOUR_USERNAME/AI-Employee-Hackathon-2026.git
-cd AI-Employee-Hackathon-2026
+git clone https://github.com/MrAfoo/ai-employee-hackathon-2026.git
+cd ai-employee-hackathon-2026
 ```
 
 ---
 
-## 🐳 Step 2 — Build Docker Images
+## Step 2 — Install Dependencies
 
 ```powershell
-docker build -t task-manager:latest       -f ./Phase2-Code/task-manager/Dockerfile.slim       ./Phase2-Code/task-manager
-docker build -t workflow-automation:latest -f ./Phase2-Code/workflow-automation/Dockerfile.slim ./Phase2-Code/workflow-automation
-docker build -t reporting-agent:latest    -f ./Phase2-Code/reporting-agent/Dockerfile.slim    ./Phase2-Code/reporting-agent
-docker build -t landing-page:latest       ./Phase2-Code/landing-page
+pip install -r BronzeTier/requirements.txt
+playwright install chromium
 ```
 
 ---
 
-## ☸️ Step 3 — Create Kubernetes Cluster
+## Step 3 — Set Up Credentials
 
 ```powershell
-kind create cluster --name ai-employee
+# Copy the template
+Copy-Item BronzeTier\.env.example BronzeTier\.env
+
+# Open and fill in your values
+notepad BronzeTier\.env
+```
+
+**Minimum required to start:**
+```env
+GROQ_API_KEY=gsk_...          # Free at https://console.groq.com
+VAULT_PATH=F:\path\to\Vault   # Your Obsidian vault path (use the Vault/ folder in this repo)
+```
+
+**Optional (for full features):**
+```env
+GMAIL_CREDENTIALS_PATH=...    # Gmail OAuth2 (see BronzeTier/setup_gmail_oauth.py)
+GMAIL_TOKEN_PATH=...          # Auto-generated after OAuth2 setup
 ```
 
 ---
 
-## 📦 Step 4 — Load Images into Cluster
+## Step 4 — Set Up Gmail OAuth2 (Optional)
 
 ```powershell
-kind load docker-image task-manager:latest       --name ai-employee
-kind load docker-image workflow-automation:latest --name ai-employee
-kind load docker-image reporting-agent:latest     --name ai-employee
-kind load docker-image landing-page:latest        --name ai-employee
+pip install google-api-python-client google-auth-oauthlib
+python BronzeTier/setup_gmail_oauth.py
+# Browser opens -> sign in -> grant permissions -> token.json saved automatically
 ```
 
 ---
 
-## 🚀 Step 5 — Deploy Everything
+## Step 5 — Set Up WhatsApp (Optional)
 
 ```powershell
-# Deploy all 3 AI Employees via Helm
-.\deploy-all.ps1
-
-# Deploy Phase 5 (HPA, Ingress, ConfigMaps, Prometheus, Grafana)
-cd Phase5-CloudNative
-.\deploy-phase5.ps1
-cd ..
+# One-time QR scan (browser opens, scan with phone)
+python BronzeTier/watchers/whatsapp_watcher.py --setup
+# Press ENTER after chats load
 ```
 
 ---
 
-## 🌐 Step 6 — Start Port Forwards & Open Browser
+## Step 6 — Launch Everything
 
 ```powershell
-.\port-forward.ps1
+powershell -ExecutionPolicy Bypass -File start_all.ps1
 ```
 
-Then open these URLs in your browser:
-
-| URL | What You See |
-|-----|-------------|
-| http://localhost:8080 | 🏠 Landing Page — links to all services |
-| http://localhost:8081 | 🤖 Task Manager API |
-| http://localhost:8081/docs | 📖 Task Manager Swagger Docs |
-| http://localhost:8081/demo/tasks | 📋 Sample Tasks JSON |
-| http://localhost:8082 | ⚙️ Workflow Automation API |
-| http://localhost:8082/docs | 📖 Workflow Swagger Docs |
-| http://localhost:8082/demo/workflows | 🔄 Sample Workflows JSON |
-| http://localhost:8083 | 📊 Reporting Agent API |
-| http://localhost:8083/docs | 📖 Reporting Swagger Docs |
-| http://localhost:8083/demo/daily | 📅 Daily Report JSON |
-| http://localhost:8083/demo/weekly | 📆 Weekly Report JSON |
-| http://localhost:8083/demo/alerts | 🚨 Alerts JSON |
-| http://localhost:9090 | 🔥 Prometheus Metrics |
-| http://localhost:3000 | 📈 Grafana Dashboard (admin / hackathon123) |
+This opens 4 terminal windows:
+- **Watchdog** — keeps everything alive, auto-restarts crashes
+- **HITL Monitor** — watches Vault/Approved/ and Vault/Rejected/
+- **Email MCP** — sends emails on approval (port 8001)
+- **Orchestrator** — main brain, polls Gmail + WhatsApp + Finance
 
 ---
 
-## 🛑 Stop Everything
+## Step 7 — Test It
 
+**Drop a test note:**
 ```powershell
-# Stop port-forwards
-Get-Process kubectl | Stop-Process -Force
+# Create a test email note
+@"
+---
+type: email
+from: client@example.com
+subject: Invoice Request
+priority: high
+---
+Please send invoice for $1,200 project completion.
+"@ | Out-File "Vault\Needs_Action\TEST_invoice.md" -Encoding utf8
+```
 
-# Delete Kind cluster (removes all Kubernetes resources)
-kind delete cluster --name ai-employee
+**Watch what happens:**
+1. Orchestrator detects new file (within 60s)
+2. Groq reasons about it → writes `Vault/Plan.md`
+3. Dashboard.md auto-updates
+4. If amount > $500 → `Vault/Pending_Approval/` file created
+5. Move it to `Vault/Approved/` → moves to `Vault/Done/` within 10s
+
+---
+
+## Folder Guide
+
+```
+Vault/
+├── Needs_Action/      <- Drop anything here for AI to process
+├── Pending_Approval/  <- AI puts sensitive actions here for your review
+├── Approved/          <- Move files here to approve (AI executes)
+├── Rejected/          <- Move files here to reject (AI archives)
+├── Done/              <- Completed tasks land here
+├── Finance_Drop/      <- Drop bank CSV files here
+├── Accounting/        <- AI writes financial summaries here
+├── Dashboard.md       <- Live status board (auto-updated)
+└── Plan.md            <- AI's current action plan (auto-updated)
 ```
 
 ---
 
-## ❓ Trouble?
+## Troubleshooting
 
 | Problem | Fix |
 |---------|-----|
-| Port-forward drops | Re-run `.\port-forward.ps1` |
-| Image not found in cluster | Re-run `kind load docker-image ...` step |
-| Pod not starting | Run `kubectl get pods -n default` to check status |
-| Grafana not loading | Wait 2 min after deploy, then retry |
+| `GROQ_API_KEY not set` | Add key to `BronzeTier/.env` |
+| `Module not found` | Run `pip install -r BronzeTier/requirements.txt` |
+| `WhatsApp not logged in` | Re-run `python BronzeTier/watchers/whatsapp_watcher.py --setup` |
+| `Gmail auth error` | Re-run `python BronzeTier/setup_gmail_oauth.py` |
+| `Orchestrator crashes` | Check `BronzeTier/orchestrator.log` for details |
+| Files not moving to Done | Make sure `start_all.ps1` is running (HITL Monitor window) |
 
 ---
 
-> 📖 For full project explanation, see **PROJECT-GUIDE.md**
-> 🎬 For judge demo commands, see **DEMO-SCRIPT.md**
+## Architecture Overview
+
+```
+[Gmail]      [WhatsApp]    [Bank CSV]    [File Drop]
+    |              |             |              |
+    +──────────────+─────────────+--------------+
+                   |
+              [Watchers] (Python scripts)
+                   |
+            [Vault/Needs_Action/]
+                   |
+            [Orchestrator.py]
+                   |
+             [Groq AI Reasoning]
+                   |
+        +──────────+──────────+
+        |                     |
+   [Plan.md]        [Pending_Approval/]
+   [Dashboard.md]        |
+                    [YOU review]
+                         |
+               +---------+---------+
+               |                   |
+          [Approved/]         [Rejected/]
+               |                   |
+          [Done/ - approved]  [Done/ - rejected]
+```
+
+---
+
+> Full documentation: **README.md**
+> Feature list: **FEATURES.md**
+> Agent skills: **SKILLS.md**
+> Hackathon spec: **hackathon.md**

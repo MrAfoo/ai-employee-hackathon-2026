@@ -43,8 +43,8 @@
 
 ### 1. Clone & Install
 ```powershell
-git clone <your-repo>
-cd AI-Employee-Hackathon-2026
+git clone https://github.com/MrAfoo/ai-employee-hackathon-2026.git
+cd ai-employee-hackathon-2026
 pip install -r BronzeTier/requirements.txt
 ```
 
