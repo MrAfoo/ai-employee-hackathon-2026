@@ -2,7 +2,7 @@
 type: email
 from: Steam Support <noreply@steampowered.com>
 subject: Your Steam account: Access from new web or mobile device
-received: 2026-02-25T14:37:05.684376
+received: 2026-02-25T14:47:48.802353
 priority: high
 status: pending
 message_id: 19ac4aac911eae05

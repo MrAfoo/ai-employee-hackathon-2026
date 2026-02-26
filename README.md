@@ -75,7 +75,7 @@ python BronzeTier/setup_gmail_oauth.py
 
 ```
 1. PERCEIVE   Watcher detects new email/WhatsApp/file
-              → Creates .md note in Vault/Needs_Action/
+              → Creates .md note in BronzeTier/Vault/Needs_Action/
 
 2. REASON     Orchestrator reads all Needs_Action notes
               → Sends to Groq LLM → Gets structured JSON plan
@@ -83,9 +83,12 @@ python BronzeTier/setup_gmail_oauth.py
 
 3. ACT        If safe: executes via MCP server
               If sensitive (>$500, payments, wire transfers):
-              → Creates APPROVAL_REQUIRED_*.md in Vault/Pending_Approval/
-              → WAITS for you to move file to Vault/Approved/
-              → Then executes and moves to Vault/Done/
+              → Creates APPROVAL_REQUIRED_*.md in BronzeTier/Vault/Pending_Approval/
+              → WAITS for you to move file to BronzeTier/Vault/Approved/
+              → Then executes and moves to BronzeTier/Vault/Done/
+
+4. REPLY      WhatsApp: move approval file to /Approved → auto-replies
+              OR: http://localhost:3000/reply/whatsapp/<phone>?msg=Hello
 ```
 
 ---
@@ -95,15 +98,15 @@ python BronzeTier/setup_gmail_oauth.py
 ```
 AI-Employee-Hackathon-2026/
 │
-├── Vault/                          ← Obsidian vault (your GUI + memory)
+├── BronzeTier/Vault/               ← Single vault (your GUI + memory)
 │   ├── Dashboard.md                ← Real-time agent status
 │   ├── Company_Handbook.md         ← Rules of engagement
 │   ├── Plan.md                     ← AI-generated action plan
-│   ├── Needs_Action/               ← Inbox for watcher-created notes
+│   ├── Needs_Action/               ← Inbox: email/WhatsApp/file notes land here
+│   ├── Pending_Approval/           ← AI puts sensitive actions here for your review
+│   ├── Approved/                   ← Move files here → AI auto-executes + replies
+│   ├── Rejected/                   ← Move files here → AI archives, no action
 │   ├── Done/                       ← Completed/processed items
-│   ├── Pending_Approval/           ← Awaiting your approval
-│   ├── Approved/                   ← Move files here to approve
-│   ├── Rejected/                   ← Move files here to reject
 │   ├── Inbox/                      ← Raw incoming notes
 │   ├── Drop/                       ← Drop any file for processing
 │   ├── Finance_Drop/               ← Drop bank CSVs here
@@ -188,7 +191,8 @@ AI-Employee-Hackathon-2026/
 | Error recovery | ✅ **Working** | Exponential backoff, quarantine, alerts |
 | Watchdog auto-restart | ✅ **Working** | Restarts orchestrator on crash |
 | Ralph Wiggum hook | ✅ **Ready** | Claude Code Stop hook |
-| WhatsApp watcher | ⚠️ **Needs setup** | Run once with headless=False to scan QR |
+| WhatsApp webhook | ✅ **Working** | Meta Cloud API + ngrok tunnel (started by start_all.ps1) |
+| WhatsApp auto-reply | ✅ **Working** | Move approval file to /Approved → auto-replies |
 | Gmail sending (SMTP) | ⚠️ **Needs app password** | Add GMAIL_APP_PASSWORD to .env |
 
 ### 🥈 Silver Tier
@@ -248,13 +252,14 @@ BronzeTier/.env.example  ← safe template (committed, no real values)
 ## 🎬 Demo: Full End-to-End Flow
 
 ```powershell
-# Step 1: Start everything
+# Step 1: Start everything (6 windows open automatically)
 .\start_all.ps1
 
-# Step 2: Drop a test note (simulates incoming email)
-Copy-Item BronzeTier/watchers/base_watcher.py Vault/Drop/test_drop.py
+# Step 2a: Send a WhatsApp message to +1 555 145 8166
+# → Appears in BronzeTier/Vault/Needs_Action/WHATSAPP_*.md
+# → If message contains: urgent/asap/money/help → Priority: HIGH → auto-triggers orchestrator
 
-# OR create a test email note:
+# Step 2b: OR drop a test email note:
 @"
 ---
 type: email
@@ -264,20 +269,18 @@ priority: high
 status: pending
 ---
 Please send invoice for Project Alpha Milestone 2 - $1,200.
-"@ | Out-File Vault/Needs_Action/TEST_invoice.md
+"@ | Out-File BronzeTier\Vault\Needs_Action\TEST_invoice.md
 
-# Step 3: Watch Orchestrator reason about it (in Terminal 1)
-# → Plan.md gets updated
-# → APPROVAL_REQUIRED_*.md appears in Vault/Pending_Approval/
+# Step 3: Orchestrator reasons → APPROVAL_REQUIRED_*.md in BronzeTier/Vault/Pending_Approval/
 
-# Step 4: Open Vault/Pending_Approval/ in Obsidian
-# Review the approval request
+# Step 4: Review the file, then approve:
+Move-Item BronzeTier\Vault\Pending_Approval\APPROVAL_REQUIRED_*.md BronzeTier\Vault\Approved\
+# → HITL auto-executes (sends email/WhatsApp reply/LinkedIn post)
+# → File moves to BronzeTier/Vault/Done/
 
-# Step 5: Approve it
-Move-Item Vault/Pending_Approval/APPROVAL_REQUIRED_*.md Vault/Approved/
-
-# Step 6: Within 10 seconds → file moves to Vault/Done/ with status: approved
-Get-ChildItem Vault/Done/
+# Step 5: To reply to WhatsApp directly (without approval flow):
+# Browser: http://localhost:3000/reply/whatsapp/923713584557?msg=Hello+there
+# OR API:  Invoke-RestMethod -Uri http://localhost:3000/reply/whatsapp -Method POST -Body '{"to":"923713584557","message":"Hello"}' -ContentType application/json
 ```
 
 ---

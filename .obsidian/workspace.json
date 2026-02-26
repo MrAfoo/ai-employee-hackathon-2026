@@ -4,17 +4,21 @@
     "type": "split",
     "children": [
       {
-        "id": "b0ac8c7c1083a6c8",
+        "id": "041b13416d984177",
         "type": "tabs",
         "children": [
           {
-            "id": "e680232fd5217e08",
+            "id": "17a308407ee8ceac",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "Dashboard.md",
+                "mode": "source",
+                "source": false
+              },
               "icon": "lucide-file",
-              "title": "New tab"
+              "title": "Dashboard"
             }
           }
         ]
@@ -74,7 +78,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 299.5
+    "width": 291.5
   },
   "right": {
     "id": "b77a3431a9607d95",
@@ -181,42 +185,42 @@
   },
   "active": "d64ca120b732776e",
   "lastOpenFiles": [
+    "BronzeTier/Vault/Needs_Action/WHATSAPP_wamid.HBgMOTIzNzEzNTg0NTU3FQIAEhggQUMyMTRBQzk3NjkzNzlBM0M2ODRFMDlGMTZGNTM3NUQA.md",
+    "BronzeTier/Vault/Done/WHATSAPP_wamid.HBgMOTIzNzEzNTg0NTU3FQIAEhggQUNGQjE0QjhGOUQ5MDQzNzgyOEMxQzE5QkYzREZEQUYA.md",
+    "BronzeTier/Vault/Needs_Action/WHATSAPP_wamid_AUTOTEST_001.md",
+    "BronzeTier/Vault/Needs_Action/EMAIL_200.md",
+    "BronzeTier/Vault/Needs_Action/EMAIL_155.md",
+    "BronzeTier/Vault/Needs_Action/EMAIL_160.md",
+    "BronzeTier/Vault/Needs_Action/EMAIL_180.md",
+    "BronzeTier/Vault/Needs_Action/EMAIL_179.md",
+    "BronzeTier/Vault/Needs_Action/EMAIL_178.md",
+    "BronzeTier/Vault/Needs_Action/EMAIL_177.md",
+    "BronzeTier/Vault/Needs_Action/EMAIL_176.md",
+    "BronzeTier/Vault/Needs_Action/EMAIL_175.md",
+    "BronzeTier/Vault/Needs_Action/EMAIL_174.md",
+    "BronzeTier/Vault/Needs_Action/EMAIL_173.md",
+    "BronzeTier/Vault/Needs_Action/EMAIL_172.md",
+    "BronzeTier/Vault/Needs_Action/EMAIL_171.md",
+    "BronzeTier/Vault/Needs_Action/EMAIL_170.md",
+    "BronzeTier/Vault/Needs_Action/EMAIL_169.md",
+    "BronzeTier/Vault/Needs_Action/EMAIL_168.md",
+    "BronzeTier/Vault/Needs_Action/EMAIL_167.md",
+    "BronzeTier/Vault/Needs_Action/EMAIL_166.md",
+    "BronzeTier/Vault/Needs_Action/EMAIL_165.md",
+    "BronzeTier/Vault/Needs_Action/EMAIL_164.md",
+    "BronzeTier/Vault/Needs_Action/EMAIL_163.md",
+    "BronzeTier/Vault/Needs_Action/EMAIL_162.md",
+    "BronzeTier/Vault/Needs_Action/EMAIL_161.md",
+    "gmail_watcher.log",
+    "orchestrator.log",
+    "tmp_rovodev_test_flow.py",
+    "logs/hitl_audit.jsonl",
+    "logs",
+    "BronzeTier/Vault/Done",
+    "hitl_orchestrator.log",
+    "BronzeTier/Vault/Finance_Drop/processed/bank_statement_feb2026.csv",
     "BronzeTier/whatsapp_session/Default/Code Cache/js/index-dir/temp-index",
     "BronzeTier/whatsapp_session/Default/WebStorage-doomed-18520_1428241945",
-    "BronzeTier/whatsapp_session/Default/WebStorage-doomed-18520_1551105695",
-    "BronzeTier/whatsapp_session/Default/Code Cache/js/88a37b9b558fa2c8_0",
-    "BronzeTier/whatsapp_session/Default/Code Cache/js/54e6d69049720f47_0",
-    "BronzeTier/whatsapp_session/Default/Code Cache/js/5e6364a06505a29e_0",
-    "BronzeTier/whatsapp_session/Default/Code Cache/js/b11d9cf5f791ab14_0",
-    "BronzeTier/whatsapp_session/Default/Code Cache/js/c8c8c8c90f82c0a6_0",
-    "BronzeTier/whatsapp_session/Default/Code Cache/js/a7a0ce63dd46e149_0",
-    "BronzeTier/whatsapp_session/Default/Code Cache/js/ec4a608c1e5ffe09_0",
-    "BronzeTier/whatsapp_session/Default/Code Cache/js/3bc22ef60df6155b_0",
-    "BronzeTier/Vault/Needs_Action/EMAIL_19ad5e91c09c4ef7.md",
-    "BronzeTier/Vault/Needs_Action/EMAIL_19b52a6686337308.md",
-    "BronzeTier/Vault/Needs_Action/EMAIL_19b6a93fdc4718c1.md",
-    "BronzeTier/Vault/Needs_Action/EMAIL_19bfa629d62c8a05.md",
-    "BronzeTier/Vault/Needs_Action/EMAIL_19bfa6538efa8e84.md",
-    "BronzeTier/Vault/Needs_Action/EMAIL_19ac4aac911eae05.md",
-    "Vault/Rejected/FINANCE_20260223_133659_Wire_Transfer___Supplier_XYZ.md",
-    "BronzeTier/Vault/Done/EMAIL_19ad5e91c09c4ef7.md",
-    "BronzeTier/Vault/Done/EMAIL_19ac4aac911eae05.md",
-    "BronzeTier/Vault/Done/EMAIL_19bfa6538efa8e84.md",
-    "BronzeTier/Vault/Done/EMAIL_19bfa629d62c8a05.md",
-    "BronzeTier/Vault/Done/EMAIL_19b3b113a9d12ea2.md",
-    "BronzeTier/Vault/Needs_Action/EMAIL_19b3b12201ddc475.md",
-    "BronzeTier/Vault/Needs_Action/EMAIL_19ac92438d32d270.md",
-    "BronzeTier/Vault/Done/EMAIL_19b3b12201ddc475.md",
-    "BronzeTier/Vault/Done/EMAIL_19b6a93fdc4718c1.md",
-    "BronzeTier/Vault/Needs_Action/EMAIL_19b3b1473035c2c7.md",
-    "BronzeTier/Vault/Needs_Action/EMAIL_19ac9281121ef6aa.md",
-    "BronzeTier/Vault/Done/EMAIL_19b3b1473035c2c7.md",
-    "BronzeTier/Vault/Dashboard.md",
-    "BronzeTier/Vault/Done/EMAIL_19b52a6686337308.md",
-    "BronzeTier/Vault/Needs_Action/EMAIL_19b3b113a9d12ea2.md",
-    "BronzeTier/Vault/Plan.md",
-    "BronzeTier/Vault/Needs_Action/EMAIL_19b5094ecf861438.md",
-    "BronzeTier/Vault/Needs_Action/EMAIL_19b50bd231ddc187.md",
     "Untitled.canvas"
   ]
 }

@@ -45,7 +45,7 @@ notepad BronzeTier\.env
 **Minimum required to start:**
 ```env
 GROQ_API_KEY=gsk_...          # Free at https://console.groq.com
-VAULT_PATH=F:\path\to\Vault   # Your Obsidian vault path (use the Vault/ folder in this repo)
+VAULT_PATH=./BronzeTier/Vault  # Single vault — do NOT change this
 ```
 
 **Optional (for full features):**
@@ -66,12 +66,32 @@ python BronzeTier/setup_gmail_oauth.py
 
 ---
 
-## Step 5 — Set Up WhatsApp (Optional)
+## Step 5 — Set Up WhatsApp
+
+WhatsApp uses the **Meta Business Cloud API** (no QR scan needed).
 
 ```powershell
-# One-time QR scan (browser opens, scan with phone)
-python BronzeTier/watchers/whatsapp_watcher.py --setup
-# Press ENTER after chats load
+# 1. Go to https://developers.facebook.com → Your App → WhatsApp → API Setup
+# 2. Add your number as a test recipient (e.g. 923713584557)
+# 3. Generate a 60-day access token and set in BronzeTier/.env:
+#    WHATSAPP_API_TOKEN=your_60_day_token
+#    WHATSAPP_PHONE_NUMBER_ID=your_phone_id
+# 4. Webhook URL: https://your-ngrok-url/webhook/whatsapp
+#    Verify token: myhackathonverifytoken
+```
+
+**To reply to a WhatsApp message:**
+```powershell
+# Option 1 — Browser (quick):
+# http://localhost:3000/reply/whatsapp/923713584557?msg=Hello+there
+
+# Option 2 — PowerShell:
+Invoke-RestMethod -Uri http://localhost:3000/reply/whatsapp `
+  -Method POST `
+  -Body '{"to":"923713584557","message":"Hello!"}' `
+  -ContentType "application/json"
+
+# Option 3 — Move approval file to BronzeTier/Vault/Approved/ → AI auto-replies
 ```
 
 ---
@@ -82,9 +102,11 @@ python BronzeTier/watchers/whatsapp_watcher.py --setup
 powershell -ExecutionPolicy Bypass -File start_all.ps1
 ```
 
-This opens 4 terminal windows:
+This opens **6 terminal windows**:
+- **WhatsApp Webhook** — receives messages on port 3000
+- **ngrok Tunnel** — exposes webhook to Meta Cloud API
+- **HITL Monitor** — watches `BronzeTier/Vault/Approved/` and `/Rejected/`
 - **Watchdog** — keeps everything alive, auto-restarts crashes
-- **HITL Monitor** — watches Vault/Approved/ and Vault/Rejected/
 - **Email MCP** — sends emails on approval (port 8001)
 - **Orchestrator** — main brain, polls Gmail + WhatsApp + Finance
 
@@ -92,9 +114,12 @@ This opens 4 terminal windows:
 
 ## Step 7 — Test It
 
-**Drop a test note:**
+**Test WhatsApp (send a message to +1 555 145 8166):**
+- Normal message → saved in `BronzeTier/Vault/Needs_Action/WHATSAPP_*.md`
+- Message with `urgent`/`asap`/`money`/`help` → **Priority: HIGH** → Orchestrator auto-triggered
+
+**Test email note:**
 ```powershell
-# Create a test email note
 @"
 ---
 type: email
@@ -103,32 +128,40 @@ subject: Invoice Request
 priority: high
 ---
 Please send invoice for $1,200 project completion.
-"@ | Out-File "Vault\Needs_Action\TEST_invoice.md" -Encoding utf8
+"@ | Out-File "BronzeTier\Vault\Needs_Action\TEST_invoice.md" -Encoding utf8
 ```
 
 **Watch what happens:**
 1. Orchestrator detects new file (within 60s)
-2. Groq reasons about it → writes `Vault/Plan.md`
+2. Groq reasons about it → writes `BronzeTier/Vault/Plan.md`
 3. Dashboard.md auto-updates
-4. If amount > $500 → `Vault/Pending_Approval/` file created
-5. Move it to `Vault/Approved/` → moves to `Vault/Done/` within 10s
+4. If amount > $500 → `BronzeTier/Vault/Pending_Approval/` file created
+5. Move it to `BronzeTier/Vault/Approved/` → HITL executes action → moves to `Done/` within 10s
 
 ---
 
 ## Folder Guide
 
 ```
-Vault/
-├── Needs_Action/      <- Drop anything here for AI to process
-├── Pending_Approval/  <- AI puts sensitive actions here for your review
-├── Approved/          <- Move files here to approve (AI executes)
-├── Rejected/          <- Move files here to reject (AI archives)
-├── Done/              <- Completed tasks land here
-├── Finance_Drop/      <- Drop bank CSV files here
-├── Accounting/        <- AI writes financial summaries here
-├── Dashboard.md       <- Live status board (auto-updated)
-└── Plan.md            <- AI's current action plan (auto-updated)
+BronzeTier/Vault/       ← Single vault for ALL services
+├── Needs_Action/       ← Email/WhatsApp/files land here automatically
+├── Pending_Approval/   ← AI puts sensitive actions here for YOUR review
+├── Approved/           ← Move files here → AI auto-executes + replies
+├── Rejected/           ← Move files here → AI archives, no action taken
+├── Done/               ← Completed tasks land here
+├── Finance_Drop/       ← Drop bank CSV files here
+├── Accounting/         ← AI writes financial summaries here
+├── Dashboard.md        ← Live status board (auto-updated)
+└── Plan.md             ← AI's current action plan (auto-updated)
 ```
+
+## WhatsApp Reply Options
+
+| Method | Command |
+|--------|---------|
+| Browser | `http://localhost:3000/reply/whatsapp/PHONE?msg=Your+message` |
+| PowerShell | `Invoke-RestMethod -Uri http://localhost:3000/reply/whatsapp -Method POST -Body '{"to":"PHONE","message":"Hello"}' -ContentType "application/json"` |
+| HITL Auto | Move file from `Pending_Approval/` → `Approved/` |
 
 ---
 
@@ -138,10 +171,12 @@ Vault/
 |---------|-----|
 | `GROQ_API_KEY not set` | Add key to `BronzeTier/.env` |
 | `Module not found` | Run `pip install -r BronzeTier/requirements.txt` |
-| `WhatsApp not logged in` | Re-run `python BronzeTier/watchers/whatsapp_watcher.py --setup` |
+| `WhatsApp token expired` | Get new 60-day token from Meta developer portal |
+| `ngrok not found` | Install ngrok: `winget install ngrok` or download from ngrok.com |
 | `Gmail auth error` | Re-run `python BronzeTier/setup_gmail_oauth.py` |
 | `Orchestrator crashes` | Check `BronzeTier/orchestrator.log` for details |
 | Files not moving to Done | Make sure `start_all.ps1` is running (HITL Monitor window) |
+| WhatsApp message not received | Check ngrok is running at `http://localhost:4040` |
 
 ---
 

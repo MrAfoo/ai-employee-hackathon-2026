@@ -29,7 +29,8 @@ from pathlib import Path
 import requests
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv('BronzeTier/.env')  # always load BronzeTier credentials
+load_dotenv()                   # fallback to local .env
 
 logging.basicConfig(
     level=logging.INFO,
@@ -41,7 +42,7 @@ logging.basicConfig(
 )
 log = logging.getLogger('HITLOrchestrator')
 
-VAULT_PATH       = Path(os.getenv('VAULT_PATH', './BronzeTier')).resolve()
+VAULT_PATH       = Path(os.getenv('VAULT_PATH', './BronzeTier/Vault')).resolve()
 PENDING_APPROVAL = VAULT_PATH / 'Pending_Approval'
 APPROVED         = VAULT_PATH / 'Approved'
 REJECTED         = VAULT_PATH / 'Rejected'
@@ -175,7 +176,7 @@ def execute_whatsapp_reply(details: dict, meta: dict) -> str:
         return 'Missing reply_text or to_phone — WhatsApp not sent.'
 
     resp = requests.post(
-        f'https://graph.facebook.com/v18.0/{phone_id}/messages',
+        f'https://graph.facebook.com/v19.0/{phone_id}/messages',
         headers={'Authorization': f'Bearer {token}', 'Content-Type': 'application/json'},
         json={
             'messaging_product': 'whatsapp',
@@ -214,7 +215,32 @@ def process_approved(filepath: Path):
     content  = filepath.read_text(encoding='utf-8')
     meta     = _extract_frontmatter(content)
     details  = _extract_json_block(content)
-    action   = meta.get('action', 'unknown')
+    action   = meta.get('action', '')
+
+    # If no action in frontmatter — this is a raw message file moved to Approved
+    # Auto-detect: if it's a WhatsApp message, send reply using from: field
+    if not action:
+        msg_type = meta.get('type', '')
+        if msg_type == 'whatsapp':
+            log.info('Raw WhatsApp message approved — sending auto-reply to sender')
+            from_phone = meta.get('from', '')
+            body_start = content.find('## Message\n')
+            original_msg = content[body_start + 12:].split('##')[0].strip() if body_start > 0 else ''
+            details = {
+                'to_phone': from_phone,
+                'reply_text': f"Hi! I received your message: '{original_msg[:80]}'. I am reviewing it now and will get back to you shortly."
+            }
+            action = 'whatsapp_reply'
+        elif msg_type == 'email':
+            log.info('Raw email approved — archiving to Done (reply manually)')
+            shutil.move(str(filepath), DONE / filepath.name)
+            return
+        else:
+            result = f'No action found in frontmatter and unknown type: {msg_type}'
+            log.warning(result)
+            _audit('unknown', str(filepath), result, success=False)
+            shutil.move(str(filepath), DONE / filepath.name)
+            return
 
     log.info('Executing approved action: %s (%s)', action, filepath.name)
 

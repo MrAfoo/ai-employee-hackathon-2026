@@ -85,11 +85,21 @@ desktop.ini
 .obsidian/cache
 .trash/
 
-# ── Vault sensitive folders ──────────────────────────────────
+# ── Vault sensitive folders (root + BronzeTier) ──────────────
 Vault/Accounting/
 Vault/Pending_Approval/
 Vault/Approved/
 Vault/Rejected/
+BronzeTier/Vault/Accounting/
+BronzeTier/Vault/Pending_Approval/
+BronzeTier/Vault/Approved/
+BronzeTier/Vault/Rejected/
+
+# ── acli tool (binary deps, not source code) ─────────────────
+.acli/
+
+# ── Gmail watcher log ────────────────────────────────────────
+gmail_watcher.log
 
 # ── Temp / scratch files ─────────────────────────────────────
 tmp_rovodev_*

@@ -157,3 +157,27 @@
 
 ## 🟢 2026-02-25 — NayaPay email: account setup and introduction
 - [ ] Respond to NayaPay introduction email and archive
+
+## 🔴 2026-02-26 — Urgent WhatsApp message requesting money
+- [ ] Process urgent WhatsApp payment request
+
+## 🔴 2026-02-26 — Urgent WhatsApp message from 923713584557
+[ ] Respond to urgent WhatsApp message from 923713584557
+
+## 🔴 2026-02-26 — Urgent WhatsApp request for money
+[ ] Request approval for urgent WhatsApp money transfer
+
+## 🔴 2026-02-26 — Exness email about market trends and events
+- [ ] Respond to Exness email about market trends and events
+
+## 🔴 2026-02-26 — Urgent WhatsApp request for picture
+- [ ] Respond to WhatsApp request for picture (high priority)
+
+## 🔴 2026-02-26 — High-priority WhatsApp message from 923713584557
+- [ ] Respond to high-priority WhatsApp message from 923713584557
+
+## 🔴 2026-02-26 — Urgent WhatsApp request for money
+- [ ] Respond to WhatsApp payment request and await approval
+
+## 🔴 2026-02-26 — Urgent WhatsApp message from 923713584557
+- [ ] Respond to urgent WhatsApp message from 923713584557

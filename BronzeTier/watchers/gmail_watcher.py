@@ -143,6 +143,6 @@ message_id: {message['id']}
 
 
 if __name__ == '__main__':
-    vault = os.getenv('VAULT_PATH', './BronzeTier')
+    vault = os.getenv('VAULT_PATH', './BronzeTier/Vault')
     watcher = GmailWatcher(vault_path=vault)
     watcher.run()

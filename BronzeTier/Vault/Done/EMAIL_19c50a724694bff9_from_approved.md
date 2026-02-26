@@ -2,7 +2,7 @@
 type: email
 from: Docker <no-reply@notify.docker.com>
 subject: [Docker] You + Docker = Ready for Action
-received: 2026-02-25T14:47:43.097579
+received: 2026-02-25T14:36:55.056760
 priority: high
 status: pending
 message_id: 19c50a724694bff9

@@ -2,7 +2,7 @@
 type: email
 from: NayaPay <service@nayapay.com>
 subject: You made it! 🚀
-received: 2026-02-25T14:47:46.360369
+received: 2026-02-25T14:37:01.473304
 priority: high
 status: pending
 message_id: 19b50bd231ddc187
