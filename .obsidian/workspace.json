@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Dashboard.md",
+                "file": "BronzeTier/Vault/Dashboard.md",
                 "mode": "source",
                 "source": false
               },
@@ -183,9 +183,13 @@
       "bases:Create new base": false
     }
   },
-  "active": "d64ca120b732776e",
+  "active": "17a308407ee8ceac",
   "lastOpenFiles": [
-    "BronzeTier/Vault/Needs_Action/WHATSAPP_wamid.HBgMOTIzNzEzNTg0NTU3FQIAEhggQUMyMTRBQzk3NjkzNzlBM0M2ODRFMDlGMTZGNTM3NUQA.md",
+    "BronzeTier/Vault/Rejected/APPROVAL_REQUIRED_WHATSAPP_wamid.HBgMOTIzNzEzNTg0NTU3FQIAEhggQUNGQjE0QjhGOUQ5MDQzNzgyOEMxQzE5QkYzREZEQUYA_20260226_131857.md",
+    "BronzeTier/Vault/Approved/APPROVAL_REQUIRED_WHATSAPP_wamid_URGENT_001_20260226_112151.md",
+    "BronzeTier/Vault/Dashboard.md",
+    "Dashboard.md",
+    "BronzeTier/Vault/Approved/WHATSAPP_wamid.HBgMOTIzNzEzNTg0NTU3FQIAEhggQUMyMTRBQzk3NjkzNzlBM0M2ODRFMDlGMTZGNTM3NUQA.md",
     "BronzeTier/Vault/Done/WHATSAPP_wamid.HBgMOTIzNzEzNTg0NTU3FQIAEhggQUNGQjE0QjhGOUQ5MDQzNzgyOEMxQzE5QkYzREZEQUYA.md",
     "BronzeTier/Vault/Needs_Action/WHATSAPP_wamid_AUTOTEST_001.md",
     "BronzeTier/Vault/Needs_Action/EMAIL_200.md",
@@ -207,10 +211,6 @@
     "BronzeTier/Vault/Needs_Action/EMAIL_167.md",
     "BronzeTier/Vault/Needs_Action/EMAIL_166.md",
     "BronzeTier/Vault/Needs_Action/EMAIL_165.md",
-    "BronzeTier/Vault/Needs_Action/EMAIL_164.md",
-    "BronzeTier/Vault/Needs_Action/EMAIL_163.md",
-    "BronzeTier/Vault/Needs_Action/EMAIL_162.md",
-    "BronzeTier/Vault/Needs_Action/EMAIL_161.md",
     "gmail_watcher.log",
     "orchestrator.log",
     "tmp_rovodev_test_flow.py",

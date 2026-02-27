@@ -503,7 +503,7 @@ Move this file to `/Rejected` folder.
 |-----------|--------|
 | Orchestrator | {health_emoji} Running ({thread_count} watcher threads) |
 | Gmail Watcher | {'🟢 Active' if Path(GMAIL_CREDENTIALS).exists() else '🟡 No credentials'} |
-| WhatsApp Watcher | 🟡 Read-only (Playwright) |
+| WhatsApp Webhook | 🟢 Meta Cloud API (port 3000) |
 | Finance Watcher | 🟢 Active |
 | Groq API | 🟢 {GROQ_MODEL} |
 
